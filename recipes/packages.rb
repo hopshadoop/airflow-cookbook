@@ -19,7 +19,7 @@
 #end
 
 # Obtain the current platform name
-platform = node['platform'].to_s
+platform = node['platform_family'].to_s
 
 # Default dependencies to install
 dependencies_to_install = []
