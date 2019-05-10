@@ -118,10 +118,6 @@ end
 
 
 
-deps = ""
-if exists_local("ndb", "mysqld") 
-  deps = "mysqld.service"
-end  
 service_name="sqoop"
 
 service service_name do
@@ -142,9 +138,6 @@ template systemd_script do
   owner "root"
   group "root"
   mode 0754
-  variables({
-            :deps => deps
-           })
   notifies :enable, resources(:service => service_name)
   notifies :start, resources(:service => service_name), :immediately
 end
