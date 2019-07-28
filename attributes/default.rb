@@ -148,7 +148,8 @@ default['airflow']['config']['core']['default_timezone'] = "system"
 # airflow sends to point links to the right web server
 default['airflow']["config"]["webserver"]["web_server_worker_timeout"]  = 120
 default['airflow']["config"]["webserver"]["web_server_port"] = 12358
-default['airflow']["config"]["webserver"]["base_url"] = node['install']['localhost'].casecmp?("true") ?  "http://localhost:" + node['airflow']['config']['webserver']['web_server_port'].to_s :  "http://#{node['fqdn']}:" + node['airflow']['config']['webserver']['web_server_port'].to_s
+default['airflow']['config']['webserver']['base_path'] = "/hopsworks-api/airflow"
+default['airflow']["config"]["webserver"]["base_url"] = (node['install']['localhost'].casecmp?("true") ?  "http://localhost:" : "http://#{node['fqdn']}:") + node['airflow']['config']['webserver']['web_server_port'].to_s + node['airflow']['config']['webserver']['base_path']  
 default['airflow']["config"]["webserver"]["web_server_host"] = '0.0.0.0'
 # The port on which to run the web server
 # The time the gunicorn webserver waits before timing out on a worker
@@ -207,7 +208,13 @@ default['airflow']["config"]["celery"]["default_queue"]  = "default"
 # Reverse Http Proxy
 # 
 default['airflow']['config']['celery']['flower_url_prefix'] = "http://localhost/hopsworks-api/flower"
-default['airflow']['config']['webserver']['base_url'] = "http://localhost/hopsworks-api/airflow"
+
+#
+# Metrics exporter 
+# TODO: When we migrate to airflow 1.10.3 or higher we will be able to install the plugin with pip
+#
+default['airflow']['metrics']['exporter_url'] = "#{node['download_url']}/prometheus/airflow-exporter.tar.gz" 
+
 
 #
 # Scheduler

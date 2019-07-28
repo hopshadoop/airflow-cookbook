@@ -58,17 +58,6 @@ template "airflow_services_env" do
   })
 end
 
-
-bash 'mysql_hack_fix' do
-  user 'root'
-  code <<-EOF
-    mkdir -p /var/run/mysqld
-    ln -s /tmp/mysql.sock /var/run/mysqld/mysqld.sock
-  EOF
-  not_if "test -e /var/run/mysqld/mysqld.sock"
-end
-
-
 #
 # Run airflow upgradedb - not airflow initdb. See:
 # https://medium.com/datareply/airflow-lesser-known-tips-tricks-and-best-practises-cf4d4a90f8f
