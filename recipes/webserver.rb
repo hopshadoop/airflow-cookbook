@@ -78,7 +78,7 @@ end
 bash 'extract-airflow-exporter' do 
   user 'root'
   group 'root'
-  code<<-EOH
+  code <<-EOH
     tar xf #{Chef::Config['file_cache_path']}/airflow-exporter.tar.gz -C #{node['airflow']["config"]["core"]["plugins_folder"]}
     chown -R #{node['airflow']['user']}:#{node['airflow']['group']} #{node['airflow']["config"]["core"]["plugins_folder"]}/airflow-exporter
     chmod -R 700 #{node['airflow']["config"]["core"]["plugins_folder"]}/airflow-exporter

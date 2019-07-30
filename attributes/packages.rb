@@ -13,7 +13,7 @@
 # Core packages - built to match the Setup.py file in the Aiflow repository.
 default['airflow']['packages'] =
   {
-    prometheus: [{ name: 'prometheus_client', version: '>=0.7.1'}]
+    prometheus: [{ name: 'prometheus_client', version: '>=0.7.1'}],
     async: [{ name: 'greenlet', version: '>=0.4.15' },
             { name: 'eventlet', version: '>=0.9.7' }],
     celery: [{ name: 'celery', version: '>=3.1.17' }],
