@@ -75,8 +75,14 @@ class HopsworksLaunchOperator(HopsworksAbstractOperator):
     :param wait_for_status: Set of final statuses to wait for {'FINISHED', 'FAILED', 'KILLED', 'FRAMEWORK_FAILURE',
                            'APP_MASTER_START_FAILED', 'INITIALIZATION_FAILED'}
     :type wait_for_status: set
+    :param ignore_failure: Do not fail the task if Job has failed
+    :type ignore_failure: boolean
     """
 
+    SUCCESS_STATUS = {'FINISHED'}
+    FAILED_STATUS = {'FAILED', 'KILLED', 'FRAMEWORK_FAILURE', 'APP_MASTER_START_FAILED', 'INITIALIZATION_FAILED'}
+    FINAL_STATUS = SUCCESS_STATUS.union(FAILED_STATUS)
+    
     @apply_defaults
     def __init__(
             self,
@@ -87,7 +93,8 @@ class HopsworksLaunchOperator(HopsworksAbstractOperator):
             wait_for_completion = True,
             poke_interval_s = 1,
             wait_timeout_s = -1,
-            wait_for_status = {'FINISHED'},
+            wait_for_status = FINAL_STATUS,
+            ignore_failure = False,
             *args,
             **kwargs):
         super(HopsworksLaunchOperator, self).__init__(hopsworks_conn_id,
@@ -100,6 +107,7 @@ class HopsworksLaunchOperator(HopsworksAbstractOperator):
         self.poke_interval_s = poke_interval_s if poke_interval_s > 0 else 1
         self.wait_timeout_s = wait_timeout_s
         self.wait_for_status = wait_for_status
+        self.ignore_failure = ignore_failure
 
     def execute(self, context):
         hook = self._get_hook()
@@ -113,7 +121,11 @@ class HopsworksLaunchOperator(HopsworksAbstractOperator):
             wait_timeout = self.wait_timeout_s
             while True:
                 time.sleep(self.poke_interval_s)
-                if self._poke_4_completion(hook):
+                state = hook.get_job_state(self.job_name)
+                if not self.ignore_failure and self._has_failed(state):
+                    raise AirflowException("Task failed because Job {0} failed with status {1}"
+                                           .format(self.job_name, state))
+                if self._has_finished(state):
                     self.log.debug("Job %s finished", self.job_name)
                     return
                 self.log.debug("Job %s has not finished yet, waiting...", self.job_name)
@@ -124,10 +136,12 @@ class HopsworksLaunchOperator(HopsworksAbstractOperator):
                         raise AirflowException("Timeout has been reached while waiting for job {0} to finish"
                                                .format(self.job_name))
 
-    def _poke_4_completion(self, hook):
-        state = hook.get_job_state(self.job_name)
+    def _has_finished(self, state):
         self.log.debug("Job state is %s", state)
         return state.upper() in self.wait_for_status
+
+    def _has_failed(self, state):
+        return state.upper() in HopsworksLaunchOperator.FAILED_STATUS
 
 
 class HopsworksModelServingInstance(HopsworksAbstractOperator):
