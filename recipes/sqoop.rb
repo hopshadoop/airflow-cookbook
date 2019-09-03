@@ -150,7 +150,6 @@ if node['kagent']['enabled'] == "true"
    kagent_config service_name do
      service "airflow"
      log_file "#{node['sqoop']['base_dir']}/log/sqoop-metastore-sqoop-localhost.log"
-     web_port node['sqoop']['port'].to_i
    end
 end
 
