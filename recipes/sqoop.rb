@@ -7,6 +7,7 @@ hops_groups()
 group node['sqoop']['group'] do
   action :create
   not_if "getent group #{node['sqoop']['group']}"
+  not_if { node['install']['external_users'].casecmp("true") == 0 }
 end
 
 user node['sqoop']['user'] do
@@ -16,24 +17,28 @@ user node['sqoop']['user'] do
   shell "/bin/bash"
   manage_home true
   not_if "getent passwd #{node['sqoop']['user']}"
+  not_if { node['install']['external_users'].casecmp("true") == 0 }
 end
 
 group node['kagent']['certs_group'] do
   action :modify
   members ["#{node['sqoop']['user']}"]
   append true
+  not_if { node['install']['external_users'].casecmp("true") == 0 }
 end
 
 group node['hops']['group'] do
   action :modify
   members ["#{node['sqoop']['user']}"]
   append true
+  not_if { node['install']['external_users'].casecmp("true") == 0 }
 end
 
 group node['sqoop']['group'] do
   action :modify
   members ["#{node['airflow']['user']}"]
   append true
+  not_if { node['install']['external_users'].casecmp("true") == 0 }
 end
 
 package_url = "#{node['sqoop']['url']}"

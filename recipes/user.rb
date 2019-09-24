@@ -15,6 +15,7 @@
 group node["airflow"]["group"] do
   action :create
   not_if "getent group #{node['airflow']['group']}"
+  not_if { node['install']['external_users'].casecmp("true") == 0 }
 end
 
 user node['airflow']['user'] do
@@ -26,15 +27,18 @@ user node['airflow']['user'] do
   manage_home true
   action :create
   not_if "getent passwd #{node['airflow']['user']}"
+  not_if { node['install']['external_users'].casecmp("true") == 0 }
 end
 
 group node['hops']['group'] do
   action :create
   not_if "getent group #{node['hops']['group']}"
+  not_if { node['install']['external_users'].casecmp("true") == 0 }
 end
 
 group node['hops']['group'] do
   action :modify
   members ["#{node['airflow']['user']}"]
   append true
+  not_if { node['install']['external_users'].casecmp("true") == 0 }
 end
