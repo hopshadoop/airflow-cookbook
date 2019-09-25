@@ -93,11 +93,12 @@ class HopsworksHook(BaseHook, LoggingMixin):
     :type owner: str
     """
     def __init__(self, hopsworks_conn_id='hopsworks_default', project_id=None,
-                 project_name=None, owner=None):
+                 project_name=None, owner=None, hw_api_key=None):
         self.hopsworks_conn_id = hopsworks_conn_id
         self.owner = owner
         self.hopsworks_conn = self.get_connection(hopsworks_conn_id)
         self.project_name = project_name
+        self.hw_api_key = hw_api_key
 
         if project_id is None:
             self.project_id,_ = self._get_project_info(project_id, project_name)
@@ -195,8 +196,11 @@ class HopsworksHook(BaseHook, LoggingMixin):
         attempts = 1
         while True:
             try:
-                jwt = self._parse_jwt_for_user()
-                auth = AuthorizationToken(jwt)
+                if self.hw_api_key:
+                    auth = APIKeyAuthorization(self.hw_api_key)
+                else:
+                    jwt = self._parse_jwt_for_user()
+                    auth = JWTAuthorization(jwt)
                 # Until we find a better approach to load trust anchors and
                 # bypass hostname verification, disable verify
                 response = requests_method(url, auth=auth, verify=False, json=data)
@@ -309,10 +313,18 @@ class HopsworksHook(BaseHook, LoggingMixin):
         with open(jwt_token_file, 'r') as fd:
             return fd.read().strip()
 
-class AuthorizationToken(AuthBase):
+class JWTAuthorization(AuthBase):
     def __init__(self, token):
         self.token = token
 
     def __call__(self, request):
-        request.headers['Authorization'] = "Bearer " + self.token
+        request.headers['Authorization'] = "Bearer {0}".format(self.token)
+        return request
+
+class APIKeyAuthorization(AuthBase):
+    def __init__(self, key):
+        self.key = key
+
+    def __call__(self, request):
+        request.headers['Authorization'] = "ApiKey {0}".format(self.key)
         return request

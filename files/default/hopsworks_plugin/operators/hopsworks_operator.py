@@ -49,9 +49,13 @@ class HopsworksAbstractOperator(BaseOperator):
         self.hopsworks_conn_id = hopsworks_conn_id
         self.project_id = project_id
         self.project_name = project_name
-        
+        if 'hw_api_key' in self.params:
+            self.hw_api_key = self.params['hw_api_key']
+        else:
+            self.hw_api_key = None
+            
     def _get_hook(self):
-        return HopsworksHook(self.hopsworks_conn_id, self.project_id, self.project_name, self.owner)
+        return HopsworksHook(self.hopsworks_conn_id, self.project_id, self.project_name, self.owner, self.hw_api_key)
 
 class HopsworksLaunchOperator(HopsworksAbstractOperator):
     """
@@ -311,10 +315,14 @@ class HopsworksSqoopOperator(SqoopOperator):
         self.hopsworks_conn_id = hopsworks_conn_id
         self.project_id = project_id
         self.project_name = project_name
+        if 'hw_api_key' in self.params:
+            self.hw_api_key = self.params['hw_api_key']
+        else:
+            self.hw_api_key = None        
     
     def execute(self, context):
         self.log.debug("Preparing Sqoop job")
-        hook = HopsworksHook(self.hopsworks_conn_id, self.project_id, self.project_name, self.owner)
+        hook = HopsworksHook(self.hopsworks_conn_id, self.project_id, self.project_name, self.owner, self.hw_api_key)
         if self.project_name is None:
             self.project_name = hook.project_name
 
