@@ -79,6 +79,17 @@ CREATE_UPDATE_SERVING_INSTANCE = ("PUT", BASE_API + "/project/{project_id}/servi
 # Start or stop a model serving instance
 START_STOP_SERVING_INSTANCE = ("POST", BASE_API + "/project/{project_id}/serving/{instance_id}?action={action}")
 
+#######################
+# Data Validation API #
+#######################
+
+# Fetch Feature store ID by name
+FEATURE_ID_BY_NAME = ("GET", BASE_API + "/project/{project_id}/featurestores/getByName/{feature_store_name}")
+# Fetch Feature Group ID by id
+FEATURE_GROUP_ID_BY_NAME = ("GET", BASE_API + "/project/{project_id}/featurestores/{feature_store_id}/featuregroups")
+# Fetch Feature Group validation result
+FEATURE_GROUP_VALIDATION_RESULT = ("GET", BASE_API + "/project/{project_id}/featurestores/{feature_store_id}/datavalidation/{feature_group_id}/result")
+
 class HopsworksHook(BaseHook, LoggingMixin):
     """
     Hook to interact with Hopsworks
@@ -178,6 +189,32 @@ class HopsworksHook(BaseHook, LoggingMixin):
         method, endpoint = START_STOP_SERVING_INSTANCE
         endpoint = endpoint.format(project_id=self.project_id, instance_id=instance_id, action="STOP")
         self._do_api_call(method, endpoint)
+
+    def get_feature_store_id_by_name(self, feature_store_name):
+        method, endpoint = FEATURE_ID_BY_NAME
+        endpoint = endpoint.format(project_id=self.project_id, feature_store_name=feature_store_name)
+        response = self._do_api_call(method, endpoint)
+        if not 'featurestoreId' in response:
+            raise AirflowException("Could not parse response, field featurestoreId does NOT exist!")
+        return response['featurestoreId']
+
+    def get_feature_group_id_by_name(self, feature_store_id, feature_group_name):
+        method, endpoint = FEATURE_GROUP_ID_BY_NAME
+        endpoint = endpoint.format(project_id=self.project_id, feature_store_id=feature_store_id)
+        response = self._do_api_call(method, endpoint)
+        for fg in response:
+            if 'name' in fg:
+                if fg['name'] == feature_group_name:
+                    feature_group_id = fg['id']
+                    break
+        if not feature_group_id:
+            raise AirflowException("Could not find ID for feature group {}".format(feature_group_name))
+        return feature_group_id
+
+    def get_feature_group_validation_result(self, feature_store_id, feature_group_id):
+        method, endpoint = FEATURE_GROUP_VALIDATION_RESULT
+        endpoint = endpoint.format(project_id=self.project_id, feature_store_id=feature_store_id, feature_group_id=feature_group_id)
+        return self._do_api_call(method, endpoint)
 
     def _do_api_call(self, method, endpoint, data=None):
         url = "https://{host}:{port}/{endpoint}".format(
