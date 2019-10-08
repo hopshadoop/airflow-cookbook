@@ -95,7 +95,7 @@ default['airflow']['dependencies'] =
     {
       default: [{ name: 'gcc', version: '' },
                 { name: 'gcc-c++', version: '' },
-                { name: 'libjpeg-devel', version: '' },
+                { name: 'libjpeg-turbo-devel', version: '' },
                 { name: 'zlib-devel', version: '' },
                 { name: 'python-devel', version: '' }],
       mysql: [{ name: 'mariadb', version: '' },
