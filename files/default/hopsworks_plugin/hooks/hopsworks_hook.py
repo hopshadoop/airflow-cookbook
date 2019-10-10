@@ -119,12 +119,22 @@ class HopsworksHook(BaseHook, LoggingMixin):
         if project_name is None:
             _, self.project_name = self._get_project_info(project_id, project_name)
 
+
     def get_connection(self, connection_id):
-        hopsworks_host = configuration.conf.get("webserver", "hopsworks_host")
-        hopsworks_port = configuration.conf.getint("webserver", "hopsworks_port")
-        return Connection(conn_id=connection_id,
-                          host=self._parse_host(hopsworks_host),
-                          port=hopsworks_port)
+        try:
+            conn = super().get_connection(connection_id)
+            if not conn.schema:
+                self.log.warn("Connection schema for {} was not set, setting https".format(connection_id))
+                conn.schema = "https"
+            return conn
+        except AirflowException:
+            self.log.warn("Didn't find connection with ID: {} - falling back to configuration".format(connection_id))
+            hopsworks_host = configuration.conf.get("webserver", "hopsworks_host")
+            hopsworks_port = configuration.conf.getint("webserver", "hopsworks_port")
+            return Connection(conn_id=connection_id,
+                              schema="https",
+                              host=self._parse_host(hopsworks_host),
+                              port=hopsworks_port)
     
     def launch_job(self, job_name):
         """
@@ -217,7 +227,8 @@ class HopsworksHook(BaseHook, LoggingMixin):
         return self._do_api_call(method, endpoint)
 
     def _do_api_call(self, method, endpoint, data=None):
-        url = "https://{host}:{port}/{endpoint}".format(
+        url = "{schema}://{host}:{port}/{endpoint}".format(
+            schema = self.hopsworks_conn.schema,
             host = self.hopsworks_conn.host,
             port = self.hopsworks_conn.port,
             endpoint = endpoint)
