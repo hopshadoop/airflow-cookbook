@@ -159,6 +159,7 @@ class HopsworksLaunchOperator(HopsworksAbstractOperator):
             wait_timeout_s = -1,
             wait_for_status = FINAL_STATUS,
             ignore_failure = False,
+            job_arguments = None,
             *args,
             **kwargs):
         super(HopsworksLaunchOperator, self).__init__(hopsworks_conn_id,
@@ -172,11 +173,12 @@ class HopsworksLaunchOperator(HopsworksAbstractOperator):
         self.wait_timeout_s = wait_timeout_s
         self.wait_for_status = wait_for_status
         self.ignore_failure = ignore_failure
+        self.job_arguments = job_arguments
 
     def execute(self, context):
         hook = self._get_hook()
         self.log.debug("Launching job %s", self.job_name)
-        hook.launch_job(self.job_name)
+        hook.launch_job(self.job_name, self.job_arguments)
 
         if self.wait_for_completion:
             self.log.debug("Waiting for job completion")

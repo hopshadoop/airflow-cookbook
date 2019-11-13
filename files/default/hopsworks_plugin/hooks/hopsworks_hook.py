@@ -55,7 +55,7 @@ BASE_API = "hopsworks-api/api"
 ## Jobs API ##
 ##############
 
-RUN_JOB = ("POST", BASE_API + "/project/{project_id}/jobs/{job_name}/executions?action=start")
+RUN_JOB = ("POST", BASE_API + "/project/{project_id}/jobs/{job_name}/executions")
 # Get the latest execution
 JOB_STATE = ("GET", BASE_API + "/project/{project_id}/jobs/{job_name}/executions?sort_by=appId:desc&limit=1")
 
@@ -136,17 +136,18 @@ class HopsworksHook(BaseHook, LoggingMixin):
                               host=self._parse_host(hopsworks_host),
                               port=hopsworks_port)
     
-    def launch_job(self, job_name):
+    def launch_job(self, job_name, args):
         """
         Function for launching a job to Hopsworks. The call does not wait for job
         completion, use HopsworksSensor for this purpose.
         
         :param job_name: Name of the job to be launched in Hopsworks
         :type job_name: str
+        :type args: runtime arguments of this execution
         """
         method, endpoint = RUN_JOB
         endpoint = endpoint.format(project_id=self.project_id, job_name=job_name)
-        response = self._do_api_call(method, endpoint)
+        response = self._do_api_call(method, endpoint, args)
 
     def get_job_state(self, job_name):
         """
@@ -251,7 +252,7 @@ class HopsworksHook(BaseHook, LoggingMixin):
                     auth = JWTAuthorization(jwt)
                 # Until we find a better approach to load trust anchors and
                 # bypass hostname verification, disable verify
-                response = requests_method(url, auth=auth, verify=False, json=data)
+                response = requests_method(url, auth=auth, verify=False, data=data)
                 response.raise_for_status()
                 try:
                     return response.json()
