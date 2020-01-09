@@ -47,7 +47,12 @@ template service_target do
 end
 
 service "airflow-scheduler" do
-  action [:enable, :start]
+  action :enable
+  only_if {node['services']['enabled'] == "true"}
+end
+
+service "airflow-scheduler" do
+  action :start
 end
 
 if node['kagent']['enabled'] == "true"
