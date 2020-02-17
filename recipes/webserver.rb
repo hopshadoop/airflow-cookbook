@@ -95,6 +95,13 @@ service "airflow-webserver" do
   action [:start]
 end
 
+# Register Airflow with Consul
+consul_service "Registering Airflow with Consul" do
+  service_definition "consul/airflow-consul.hcl.erb"
+  reload_consul false
+  action :register
+end
+
 if node['kagent']['enabled'] == "true"
     kagent_config "airflow-webserver" do
       service "airflow"

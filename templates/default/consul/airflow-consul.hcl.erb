@@ -1,0 +1,19 @@
+services = [
+    {
+        id = "airflow/webserver"
+        name = "airflow"
+        tags = [
+            "airflow",
+            "webserver",
+            "ui"
+        ]
+        port = <%= node['airflow']["config"]["webserver"]["web_server_port"] %>
+        check = {
+            id = "airflow-webserver-check"
+            name = "Health check for Airflow webserver"
+            http = "http://localhost:<%= node['airflow']["config"]["webserver"]["web_server_port"] %><%= node['airflow']['config']['webserver']['base_path'] %>/api/experimental/test"
+            interval = "20s"
+            timeout = "5s"
+        }
+    }
+]
