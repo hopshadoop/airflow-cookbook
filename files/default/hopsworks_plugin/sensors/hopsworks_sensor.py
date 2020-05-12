@@ -74,9 +74,9 @@ class HopsworksJobFinishSensor(BaseSensorOperator):
             return self.response_check(app_state, am_status)
 
         # If no check was defined, assume that any FINAL state is success
-        return app_state.upper() in JOB_FINAL_APP_STATES 
+        return app_state.upper() in JOB_FINAL_APP_STATES
 
-    
+
 class HopsworksJobSuccessSensor(BaseSensorOperator):
     """
     Sensor to wait for a successful completion of a job
@@ -114,8 +114,8 @@ class HopsworksJobSuccessSensor(BaseSensorOperator):
         hook = self._get_hook()
         app_state, am_status = hook.get_job_state(self.job_name)
 
-        if app_state.upper() in JOB_FAILED_FINAL_APP_STATES or \ 
+        if app_state.upper() in JOB_FAILED_FINAL_APP_STATES or \
            (app_state.upper() in JOB_SUCCESS_FINAL_APP_STATES and am_status.upper() in JOB_FAILED_AM_STATUS):
             raise AirflowException("Hopsworks job failed")
-        
-        return app_state.upper() in JOB_SUCCESS_FINAL_APP_STATES 
+
+        return app_state.upper() in JOB_SUCCESS_FINAL_APP_STATES
