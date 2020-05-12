@@ -23,12 +23,14 @@ from airflow.utils.decorators import apply_defaults
 
 from hopsworks_plugin.hooks.hopsworks_hook import HopsworksHook
 
-JOB_SUCCESS_FINAL_STATES = {'FINISHED'}
+JOB_SUCCESS_FINAL_APP_STATES = {'FINISHED'}
 
-JOB_FAILED_FINAL_STATES = {'FAILED', 'KILLED', 'FRAMEWORK_FAILURE',
+JOB_FAILED_FINAL_APP_STATES = {'FAILED', 'KILLED', 'FRAMEWORK_FAILURE',
                            'APP_MASTER_START_FAILED', 'INITIALIZATION_FAILED'}
 
-JOB_FINAL_STATES = JOB_FAILED_FINAL_STATES.union(JOB_SUCCESS_FINAL_STATES)
+JOB_FINAL_APP_STATES = JOB_FAILED_FINAL_APP_STATES.union(JOB_SUCCESS_FINAL_APP_STATES)
+
+JOB_FAILED_AM_STATUS = {'FAILED', 'KILLED'}
 
 class HopsworksJobFinishSensor(BaseSensorOperator):
     """
@@ -66,13 +68,13 @@ class HopsworksJobFinishSensor(BaseSensorOperator):
 
     def poke(self, context):
         hook = self._get_hook()
-        state = hook.get_job_state(self.job_name)
+        app_state, am_status = hook.get_job_state(self.job_name)
 
         if self.response_check:
-            return self.response_check(state)
+            return self.response_check(app_state, am_status)
 
         # If no check was defined, assume that any FINAL state is success
-        return state.upper() in JOB_FINAL_STATES
+        return app_state.upper() in JOB_FINAL_APP_STATES 
 
     
 class HopsworksJobSuccessSensor(BaseSensorOperator):
@@ -110,9 +112,10 @@ class HopsworksJobSuccessSensor(BaseSensorOperator):
 
     def poke(self, context):
         hook = self._get_hook()
-        state = hook.get_job_state(self.job_name)
+        app_state, am_status = hook.get_job_state(self.job_name)
 
-        if state.upper() in JOB_FAILED_FINAL_STATES:
+        if app_state.upper() in JOB_FAILED_FINAL_APP_STATES or \ 
+           (app_state.upper() in JOB_SUCCESS_FINAL_APP_STATES and am_status.upper() in JOB_FAILED_AM_STATUS):
             raise AirflowException("Hopsworks job failed")
         
-        return state.upper() in JOB_SUCCESS_FINAL_STATES
+        return app_state.upper() in JOB_SUCCESS_FINAL_APP_STATES 
