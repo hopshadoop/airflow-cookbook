@@ -159,7 +159,7 @@ class HopsworksHook(BaseHook, LoggingMixin):
         endpoint = endpoint.format(project_id=self.project_id, job_name=job_name)
         response = self._do_api_call(method, endpoint)
         item = response['items'][0]
-        return item['state']
+        return item['state'], item['finalStatus']
 
     def get_model_serving_instances(self):
         """
