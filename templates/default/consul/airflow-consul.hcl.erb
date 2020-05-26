@@ -5,6 +5,7 @@ services = [
         tags = [
             "airflow",
             "webserver",
+            "monitoring",
             "ui"
         ]
         port = <%= node['airflow']["config"]["webserver"]["web_server_port"] %>
