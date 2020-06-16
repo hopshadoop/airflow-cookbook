@@ -30,7 +30,7 @@ depends 'hops'
 depends 'ndb'
 depends 'conda'
 depends 'hive2'
-
+depends 'consul'
 
 recipe           "default", "Configures an Airflow Server"
 recipe           "install", "Installs an Airflow Server"

@@ -21,4 +21,4 @@ cookbook 'hops', github: "logicalclocks/hops-hadoop-chef", branch: "master"
 cookbook 'ndb', github: "logicalclocks/ndb-chef", branch: "master"
 cookbook 'conda', github: "logicalclocks/conda-chef", branch: "master"
 cookbook 'hive2', github: "logicalclocks/hive-chef", branch: "master"
-
+cookbook 'consul', github: "logicalclocks/consul-chef", branch: "master"

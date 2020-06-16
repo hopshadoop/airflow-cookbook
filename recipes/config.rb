@@ -12,16 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-hopsworks_ip = "localhost"
-hopsworks_port = "8181"
+hopsworks_port = "8182"
 if node.attribute?("hopsworks")
-  hopsworks_ip = private_recipe_ip("hopsworks", "default")
-  if node['hopsworks'].attribute?('https') and node['hopsworks']['https'].attribute?('port')
-    hopsworks_port = node['hopsworks']['https']['port']
+  if node['hopsworks'].attribute?('internal') and node['hopsworks']['internal'].attribute?('port')
+    hopsworks_port = node['hopsworks']['internal']['port']
   end
 end
 
-node.override['airflow']["config"]["webserver"]["hopsworks_host"] = hopsworks_ip
+node.override['airflow']["config"]["webserver"]["hopsworks_host"] = consul_helper.get_service_fqdn("hopsworks.glassfish")
 node.override['airflow']["config"]["webserver"]["hopsworks_port"] = hopsworks_port
 
 template "#{node["airflow"]["config"]["core"]["airflow_home"]}/airflow.cfg" do
