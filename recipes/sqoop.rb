@@ -20,9 +20,9 @@ user node['sqoop']['user'] do
   not_if { node['install']['external_users'].casecmp("true") == 0 }
 end
 
-group node['kagent']['certs_group'] do
+group node['kagent']['userscerts_group'] do
   action :modify
-  members ["#{node['sqoop']['user']}"]
+  members node['sqoop']['user']
   append true
   not_if { node['install']['external_users'].casecmp("true") == 0 }
 end
