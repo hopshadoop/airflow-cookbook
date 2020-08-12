@@ -63,8 +63,7 @@ Please follow instructions in the [contributing doc](CONTRIBUTING.md).
 - ["airflow"]["pip_version"] = Pip version to install (true - installs latest) as used by poise-python cookbook.
 
 ##### Package config
-- default['airflow']['packages'] - The Python packages to install for Airflow.
-- default['airflow']['dependencies'] - The dependencies of the packages listed in default['airflow']['packages']. These are OS packages, not Python packages. 
+- default['airflow']['dependencies'] - The dependencies of the python packages required for airflow. These are OS packages, not Python packages. 
 
 ##### airflow.cfg
 This cookbook enables to configure any airflow.cfg paramters dynamically by using attributes structure like (see the attributes file for [airflow.cfg examples](attributes/default.rb)):
