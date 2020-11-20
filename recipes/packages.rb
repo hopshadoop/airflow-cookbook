@@ -113,7 +113,6 @@ bash 'install_airflow' do
     EOF
 end
 
-
 for operator in node['airflow']['operators'].split(",")
   bash 'install_airflow_' + operator do
     umask "022"

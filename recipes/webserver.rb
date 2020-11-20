@@ -68,7 +68,7 @@ end
 
 bash 'remove-old-airflow-exporter' do
   user 'root'
-  group 'group'
+  group 'root'
   code <<-EOH
    rm -rf #{node['airflow']["config"]["core"]["plugins_folder"]}/airflow-exporter
   EOH
