@@ -211,13 +211,6 @@ default['airflow']["config"]["celery"]["default_queue"]  = "default"
 default['airflow']['config']['celery']['flower_url_prefix'] = "http://localhost/hopsworks-api/flower"
 
 #
-# Metrics exporter 
-# TODO: When we migrate to airflow 1.10.3 or higher we will be able to install the plugin with pip
-#
-default['airflow']['metrics']['exporter_url'] = "#{node['download_url']}/prometheus/airflow-exporter.tar.gz" 
-
-
-#
 # Scheduler
 #
 # https://cwiki.apache.org/confluence/display/AIRFLOW/Scheduler+Basics
