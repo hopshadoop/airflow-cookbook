@@ -102,11 +102,11 @@ default['airflow']["config"]["core"]["fernet_key"] = "G3jB5--jCQpRYp7hwUtpfQ_S8z
 default['airflow']["config"]["celery"]["worker_concurrency"] = 16
 default['airflow']["config"]["celery"]["broker_url"] = "rdis://#{node['host']}:6379/0"
 
-default['airflow']["config"]["celery"]["celery_result_backend"] = "db+mysql://#{node['airflow']['mysql_user']}:#{node['airflow']['mysql_password']}@127.0.0.1:3306/airflow"
+default['airflow']["config"]["celery"]["celery_result_backend"] = "db+mysql://#{node['airflow']['mysql_user']}:#{node['airflow']['mysql_password']}@127.0.0.1:3306/airflow?charset=utf8mb4"
 
 # MySQL
 # The SqlAlchemy connection string to the metadata database.
-default['airflow']["config"]["core"]["sql_alchemy_conn"] = "mysql://#{node['airflow']['mysql_user']}:#{node['airflow']['mysql_password']}@127.0.0.1:3306/airflow"
+default['airflow']["config"]["core"]["sql_alchemy_conn"] = "mysql://#{node['airflow']['mysql_user']}:#{node['airflow']['mysql_password']}@127.0.0.1:3306/airflow?charset=utf8mb4"
 # The SqlAlchemy pool size is the maximum number of database connection in the pool.
 default['airflow']["config"]["core"]["sql_alchemy_pool_size"] = 5
 # The SqlAlchemy pool recycle is the number of seconds a connection
@@ -209,13 +209,6 @@ default['airflow']["config"]["celery"]["default_queue"]  = "default"
 # Reverse Http Proxy
 # 
 default['airflow']['config']['celery']['flower_url_prefix'] = "http://localhost/hopsworks-api/flower"
-
-#
-# Metrics exporter 
-# TODO: When we migrate to airflow 1.10.3 or higher we will be able to install the plugin with pip
-#
-default['airflow']['metrics']['exporter_url'] = "#{node['download_url']}/prometheus/airflow-exporter.tar.gz" 
-
 
 #
 # Scheduler

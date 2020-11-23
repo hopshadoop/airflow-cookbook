@@ -108,12 +108,10 @@ bash 'install_airflow' do
   cwd "/home/#{node['conda']['user']}"
   code <<-EOF
       set -e
-      # Pinning WTForms should be removed when upgrading airflow version, this change was to address https://github.com/apache/airflow/issues/8514
-      #{node['conda']['base_dir']}/envs/airflow/bin/pip install --no-cache-dir WTForms==2.2.1
-      #{node['conda']['base_dir']}/envs/airflow/bin/pip install --no-cache-dir apache-airflow==#{node['airflow']['version']}
+      #{node['conda']['base_dir']}/envs/airflow/bin/pip install --no-cache-dir apache-airflow==#{node['airflow']['version']} --constraint #{node['airflow']['url']}
+      #{node['conda']['base_dir']}/envs/airflow/bin/pip install --no-cache-dir airflow-exporter==1.3.0
     EOF
 end
-
 
 for operator in node['airflow']['operators'].split(",")
   bash 'install_airflow_' + operator do
