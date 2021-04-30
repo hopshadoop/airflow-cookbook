@@ -24,13 +24,13 @@ chef_version     '>=12.1'
 
 depends 'apt', '~> 7.0'
 depends 'poise-python', '~> 1.7'
-depends 'java', '~> 7.0.0'
 depends 'kagent'
 depends 'hops'
 depends 'ndb'
 depends 'conda'
 depends 'hive2'
 depends 'consul'
+depends 'java'
 
 recipe           "default", "Configures an Airflow Server"
 recipe           "install", "Installs an Airflow Server"
