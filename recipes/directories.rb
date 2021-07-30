@@ -36,6 +36,13 @@ directory node['data']['dir'] do
   not_if { ::File.directory?(node['data']['dir']) }
 end
 
+directory node['airflow']['data_volume']['root_dir'] do
+  owner node["airflow"]["user"]
+  group node["airflow"]["group"]
+  mode "755"
+  action :create
+end
+
 # /srv/hops/airflow/dags is a private directory - each project will have its own
 # directory owned by 'glassfish' with a secret key as a name. No read permissions for
 # group on this directory, means the 'glassfish' user cannot perform 'ls' on this directory
