@@ -73,12 +73,21 @@ default['airflow']["pip_version"] = true
 # Configurations stated below are required for this cookbook and will be written to airflow.cfg, you can add more config by using structure like:
 # default['airflow']["config"]["CONFIG_SECTION"]["CONFIG_ENTRY"]
 
+# Data volume directories
+default['airflow']['data_volume']['root_dir']       = "#{node['data']['dir']}/airflow"
+default['airflow']['data_volume']['dags_dir']       = "#{node['airflow']['data_volume']['root_dir']}/dags"
+default['airflow']['data_volume']['log_dir']        = "#{node['airflow']['data_volume']['root_dir']}/logs"
+default['airflow']['data_volume']['secrets_dir']    = "#{node['airflow']['data_volume']['root_dir']}/secrets"
+
 #  The home folder for airflow, default is ~/airflow
 default['airflow']["config"]["core"]["airflow_home"] = node['airflow']["base_dir"]
 # The folder where your airflow pipelines live, most likely a subfolder in a code repository
 default['airflow']["config"]["core"]["dags_folder"] = "#{node['airflow']["config"]["core"]["airflow_home"]}/dags"
 # The folder where airflow should store its log files. This location
 default['airflow']["config"]["core"]["base_log_folder"]  = node['airflow']["base_dir"] + "/logs"
+
+# Folder where airflow will store Project user secrets
+default['airflow']['secrets_dir']                    = "#{node['airflow']['base_dir']}/secrets"
 
 # must supply a remote location URL (starting with either 's3://...' or
 # 'gs://...') and an Airflow connection id that provides access to the storage

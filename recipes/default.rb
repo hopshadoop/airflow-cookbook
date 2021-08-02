@@ -39,13 +39,6 @@ directory node['airflow']['base_dir'] + "/plugins"  do
   action :create
 end
 
-directory node['airflow']['base_dir'] + "/dags"  do
-  owner node['airflow']['user']
-  group node['airflow']['group']
-  mode "770"
-  action :create
-end
-
 template "airflow_services_env" do
   source "init_system/airflow-env.erb"
   path node["airflow"]["env_path"]
