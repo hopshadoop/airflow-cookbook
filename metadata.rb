@@ -45,8 +45,16 @@ attribute "airflow/user",
           :description => "Airflow username to run service as",
           :type => 'string'
 
+attribute "airflow/user_id",
+          :description => "airflow user id. Default: 1512",
+          :type => 'string'
+
 attribute "airflow/group",
           :description => "Airflow group to run service as",
+          :type => 'string'
+
+attribute "airflow/group",
+          :description => "airflow group id. Default: 1508",
           :type => 'string'
 
 attribute "airflow/mysql_user",
@@ -85,8 +93,16 @@ attribute "sqoop/user",
           :description => "Sqoop username to run service as",
           :type => 'string'
 
+attribute "sqoop/user_id",
+          :description => "sqoop user id. Default: 1513",
+          :type => 'string'
+
 attribute "sqoop/group",
           :description => "Sqoop group to run service as",
+          :type => 'string'
+
+attribute "sqoop/group_id",
+          :description => "sqoop group id. Default: 1509",
           :type => 'string'
 
 attribute "sqoop/port",

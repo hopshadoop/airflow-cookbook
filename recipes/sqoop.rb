@@ -2,9 +2,8 @@ include_recipe "java"
 
 my_ip = my_private_ip()
 
-hops_groups()
-
 group node['sqoop']['group'] do
+  gid node['sqoop']['group_id']
   action :create
   not_if "getent group #{node['sqoop']['group']}"
   not_if { node['install']['external_users'].casecmp("true") == 0 }
@@ -12,6 +11,7 @@ end
 
 user node['sqoop']['user'] do
   home "/home/#{node['sqoop']['user']}"
+  uid node['sqoop']['user_id']
   gid node['sqoop']['group']
   action :create
   shell "/bin/bash"
