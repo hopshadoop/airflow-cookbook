@@ -22,7 +22,9 @@ default['airflow']["airflow_package"] = 'apache-airflow'
 default['airflow']["version"]         = "1.10.10"
 default['airflow']['url']             = "#{node['download_url']}/apache/airflow/#{node['airflow']['version']}/constraints/constraints-3.7.txt"
 default['airflow']['user']            = node['install']['user'].empty? ? 'airflow' : node['install']['user']
+default['airflow']['user_id']         = '1512'
 default['airflow']['group']           = node['install']['user'].empty? ? 'airflow' : node['install']['user']
+default['airflow']['group_id']        = '1508'
 
 default['airflow']['mysql_user']      = "airflow_db"
 default['airflow']['mysql_password']  = "airflow_db"
@@ -30,7 +32,9 @@ default['airflow']['mysql_password']  = "airflow_db"
 # Sqoop setup
 default["sqoop"]["version"]           = "1.4.7"
 default['sqoop']['user']              = node['install']['user'].empty? ? "sqoop" : node['install']['user']
+default['sqoop']['user_id']           = '1513'
 default['sqoop']['group']             = node['install']['user'].empty? ? "sqoop" : node['install']['user']
+default['sqoop']['group_id']          = '1509'
 default["sqoop"]["dir"]               = node['install']['dir'].empty? ? "/srv/hops" : node['install']['dir']
 default["sqoop"]["home"]              = node['sqoop']['dir'] + "/sqoop-" +  node['sqoop']['version'] + ".bin__hadoop-2.6.0"
 default["sqoop"]["base_dir"]          = node['sqoop']['dir'] + "/sqoop" 
