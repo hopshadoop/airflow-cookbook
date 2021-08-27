@@ -50,7 +50,7 @@ end
 directory node['airflow']['data_volume']['dags_dir'] do
   owner node["airflow"]["user"]
   group node["airflow"]["group"]
-  mode "710"
+  mode "730"
   recursive true
   action :create
 end
@@ -81,7 +81,7 @@ end
 link node["airflow"]["config"]["core"]["dags_folder"] do
   owner node["airflow"]["user"]
   group node["airflow"]["group"]
-  mode "710"
+  mode "730"
   to node['airflow']['data_volume']['dags_dir']
 end
 
