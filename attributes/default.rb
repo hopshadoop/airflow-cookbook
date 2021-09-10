@@ -19,7 +19,7 @@ include_attribute "hops"
 
 # User configuration
 default['airflow']["airflow_package"] = 'apache-airflow' 
-default['airflow']["version"]         = "1.10.10"
+default['airflow']["version"]         = "2.1.3"
 default['airflow']['url']             = "#{node['download_url']}/apache/airflow/#{node['airflow']['version']}/constraints/constraints-3.7.txt"
 default['airflow']['user']            = node['install']['user'].empty? ? 'airflow' : node['install']['user']
 default['airflow']['user_id']         = '1512'
