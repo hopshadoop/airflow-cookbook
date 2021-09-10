@@ -52,7 +52,7 @@ template "airflow_services_env" do
 end
 
 #
-# Run airflow upgradedb - not airflow initdb. See:
+# Run airflow db upgrade - not airflow db init. See:
 # https://medium.com/datareply/airflow-lesser-known-tips-tricks-and-best-practises-cf4d4a90f8f
 #
 bash 'init_airflow_db' do
@@ -60,7 +60,7 @@ bash 'init_airflow_db' do
   code <<-EOF
       set -e
       export AIRFLOW_HOME=#{node['airflow']['base_dir']}
-      #{node['airflow']['bin_path']}/airflow upgradedb
+      #{node['airflow']['bin_path']}/airflow db upgrade
     EOF
 end
 

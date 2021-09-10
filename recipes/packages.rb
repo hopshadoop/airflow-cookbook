@@ -109,7 +109,7 @@ bash 'install_airflow' do
   code <<-EOF
       set -e
       #{node['conda']['base_dir']}/envs/airflow/bin/pip install --no-cache-dir apache-airflow==#{node['airflow']['version']} --constraint #{node['airflow']['url']}
-      #{node['conda']['base_dir']}/envs/airflow/bin/pip install --no-cache-dir airflow-exporter==1.3.0
+      #{node['conda']['base_dir']}/envs/airflow/bin/pip install --no-cache-dir airflow-exporter==#{node['airflow']['version']}
     EOF
 end
 

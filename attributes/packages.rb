@@ -34,6 +34,18 @@ default['airflow']['dependencies'] =
                 { name: 'libsasl2-dev', version: '' },
                 { name: 'libkrb5-dev', version: '' },
                 { name: 'libkrb5-dev', version: '' },
+                { name: 'freetds-bin', version: '' },
+                { name: 'krb5-user', version: '' },
+                { name: 'ldap-utils', version: '' },
+                { name: 'libffi6', version: '' },
+                { name: 'libsasl2-2', version: '' },
+                { name: 'libsasl2-modules', version: '' },
+                { name: 'libssl1.1', version: '' },
+                { name: 'locales', version: '' },
+                { name: 'lsb-release', version: '' },
+                { name: 'sasl2-bin', version: '' },
+#                { name: 'sqlite3', version: '' },
+                { name: 'unixodbc', version: '' },
                 { name: 'libsasl2-dev', version: '' }]
     },
     rhel:
