@@ -60,6 +60,12 @@ bash 'init_airflow_db' do
   code <<-EOF
       set -e
       export AIRFLOW_HOME=#{node['airflow']['base_dir']}
+      RES=$(#{node['airflow']['bin_path']}/airflow db check)
+      if [ $RES -ne 0 ] ; then
+         echo "Problem connecting to the Database by Airflow"
+         exit 1
+      fi
+      #{node['airflow']['bin_path']}/airflow db init
       #{node['airflow']['bin_path']}/airflow db upgrade
     EOF
 end

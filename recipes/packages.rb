@@ -108,7 +108,7 @@ bash 'install_airflow' do
   cwd "/home/#{node['conda']['user']}"
   code <<-EOF
       set -e
-      #{node['conda']['base_dir']}/envs/airflow/bin/pip install --no-cache-dir apache-airflow==#{node['airflow']['version']} --constraint #{node['airflow']['url']}
+      #{node['conda']['base_dir']}/envs/airflow/bin/pip install --no-cache-dir apache-airflow==#{node['airflow']['version']} --constraint #{node['airflow']['constrains_url']}
     EOF
 end
 
@@ -136,7 +136,7 @@ for operator in node['airflow']['operators'].split(",")
                   'AIRFLOW_HOME' => node['airflow']['base_dir']})
     code <<-EOF
       set -e
-      #{node['conda']['base_dir']}/envs/airflow/bin/pip install apache-airflow["#{operator}"]==#{node['airflow']['version']} --constraint #{node['airflow']['url']}
+      #{node['conda']['base_dir']}/envs/airflow/bin/pip install apache-airflow["#{operator}"]==#{node['airflow']['version']} --constraint #{node['airflow']['constraints_main_url']}
     EOF
   end
 end
