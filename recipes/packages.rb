@@ -109,9 +109,23 @@ bash 'install_airflow' do
   code <<-EOF
       set -e
       #{node['conda']['base_dir']}/envs/airflow/bin/pip install --no-cache-dir apache-airflow==#{node['airflow']['version']} --constraint #{node['airflow']['url']}
-      #{node['conda']['base_dir']}/envs/airflow/bin/pip install --no-cache-dir airflow-exporter==#{node['airflow']['version']}
     EOF
 end
+
+bash 'install_airflow_exporter' do
+  umask "022"
+  user node['conda']['user']
+  group node['conda']['group']
+  environment ({'SLUGIFY_USES_TEXT_UNIDECODE' => 'yes',
+                'AIRFLOW_HOME' => node['airflow']['base_dir'],
+                'HOME' => "/home/#{node['conda']['user']}"})
+  cwd "/home/#{node['conda']['user']}"
+  code <<-EOF
+      set -e
+      #{node['conda']['base_dir']}/envs/airflow/bin/pip install --no-cache-dir airflow-exporter==#{node['airflow']['exporter_version']}
+    EOF
+end
+
 
 for operator in node['airflow']['operators'].split(",")
   bash 'install_airflow_' + operator do

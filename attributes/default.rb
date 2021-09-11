@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+include_attribute "conda"
 include_attribute "kagent"
 include_attribute "ndb"
 include_attribute "hops"
@@ -20,7 +21,8 @@ include_attribute "hops"
 # User configuration
 default['airflow']["airflow_package"] = 'apache-airflow' 
 default['airflow']["version"]         = "2.1.3"
-default['airflow']['url']             = "#{node['download_url']}/apache/airflow/#{node['airflow']['version']}/constraints/constraints-3.7.txt"
+default['airflow']["exporter_version"]= "1.5.2"
+default['airflow']['url']             = "#{node['download_url']}/apache/airflow/#{node['airflow']['version']}/constraints/constraints-#{node['install']['python']['version']}.txt"
 default['airflow']['user']            = node['install']['user'].empty? ? 'airflow' : node['install']['user']
 default['airflow']['user_id']         = '1512'
 default['airflow']['group']           = node['install']['user'].empty? ? 'airflow' : node['install']['user']
