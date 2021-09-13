@@ -136,7 +136,21 @@ for operator in node['airflow']['operators'].split(",")
                   'AIRFLOW_HOME' => node['airflow']['base_dir']})
     code <<-EOF
       set -e
-      #{node['conda']['base_dir']}/envs/airflow/bin/pip install apache-airflow["#{operator}"]==#{node['airflow']['version']} --constraint #{node['airflow']['constraints_url']}
+      #{node['conda']['base_dir']}/envs/airflow/bin/pip install apache-airflow-providers-"#{operator}"
+    EOF
+  end
+end
+
+for extra in node['airflow']['extras'].split(",")
+  bash 'install_airflow_' + extra do
+    umask "022"
+    user node['conda']['user']
+    group node['conda']['group']
+    environment ({'SLUGIFY_USES_TEXT_UNIDECODE' => 'yes',
+                  'AIRFLOW_HOME' => node['airflow']['base_dir']})
+    code <<-EOF
+      set -e
+      #{node['conda']['base_dir']}/envs/airflow/bin/pip install apache-airflow["#{extra}"]==#{node['airflow']['version']} --constraint #{node['airflow']['constraints_url']}
     EOF
   end
 end

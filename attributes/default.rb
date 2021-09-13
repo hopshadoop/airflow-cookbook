@@ -47,7 +47,9 @@ default["sqoop"]["port"]              = "16000"
 
 
 ## Remove devel_hadoop which brings snakebite[kerberos] which does not work on Python 3
-default['airflow']["operators"]       = "hive,mysql,kubernetes,password,hdfs,ssh,jdbc,mysql,crypto"
+## remove apache-hdfs, snakebite dependency
+default['airflow']["operators"]       = "apache-sqoop,apache-hive,mysql,cncf-kubernetes,ssh,jdbc"
+default['airflow']["extras"]       = "password,cncf-kuberentes,apache.hdfs"
 
 #default['airflow']["user_uid"] = 9999
 #default['airflow']["group_gid"] = 9999
@@ -74,7 +76,7 @@ default['airflow']["scheduler_duration"] = 21600
 
 # Python config
 default['airflow']["python_runtime"] = "3"
-default['airflow']["python_version"] = "3.7"
+default['airflow']["python_version"] = node['install']['python']['version']
 default['airflow']["pip_version"] = true
 
 # Configurations stated below are required for this cookbook and will be written to airflow.cfg, you can add more config by using structure like:
@@ -180,7 +182,7 @@ default['airflow']["config"]["webserver"]["authenticate"] = true
 default['airflow']["config"]["webserver"]["auth_backend"] = "hopsworks_auth.hopsworks_jwt_auth"
 
 # Secret key used to run your flask app
-default['airflow']["config"]["webserver"]["secret_key"]  = "temporary_key"
+default['airflow']["config"]["webserver"]["secret_key"]  = "`openssl rand -hex 30`"
 # Number of workers to run the Gunicorn web server
 default['airflow']["config"]["webserver"]["workers"]  = 4
 # The worker class gunicorn should use. Choices include
@@ -188,6 +190,8 @@ default['airflow']["config"]["webserver"]["workers"]  = 4
 default['airflow']["config"]["webserver"]["worker_class"]  = "sync"
 
 default['airflow']["config"]["webserver"]["expose_config"]  = true
+
+default['airflow']["config"]["webserver"]["rbac"]  = true
 
 # Email
 default['airflow']["config"]["email"]["email_backend"]  = "airflow.utils.email.send_email_smtp"
