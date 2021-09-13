@@ -57,6 +57,8 @@ end
 #
 bash 'init_airflow_db' do
   user node['airflow']['user']
+  retry_delay 20
+  retries 1
   code <<-EOF
       set -e
       export AIRFLOW_HOME=#{node['airflow']['base_dir']}
