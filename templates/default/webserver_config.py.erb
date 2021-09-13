@@ -1,0 +1,36 @@
+"""
+AUTH_ROLE_ADMIN: the role of the bind user (should be Admin)
+AUTH_USER_REGISTRATION: boolean for automatically creating users on first log-in
+AUTH_USER_REGISTRATION_ROLE: the role which first-time users logging in will be assigned
+                             Possible Values: Admin, Viewer, User, Op, Public 
+AUTH_LDAP_SERVER: the LDAP server URI
+AUTH_LDAP_SEARCH: update with the LDAP path under which you’d like the users to have access to Airflow. Example: dc=example,dc=com.
+AUTH_LDAP_BIND_USER: the path of the LDAP proxy user to bind on to the top level. Example: cn=airflow,ou=users,dc=example,dc=com.
+AUTH_LDAP_BIND_PASSWORD: the password of the bind user
+AUTH_LDAP_UID_FIELD: the UID (unique identifier) field in LDAP
+AUTH_LDAP_USE_TLS: boolean whether TLS is being used
+AUTH_LDAP_ALLOW_SELF_SIGNED: boolean to allow self-signed certificates
+AUTH_LDAP_TLS_CACERTFILE: location of the certificate
+"""
+import os
+
+from flask_appbuilder.security.manager import AUTH_DB
+# from flask_appbuilder.security.manager import AUTH_REMOTE_USER
+
+basedir = os.path.abspath(os.path.dirname(__file__))
+
+# Flask-WTF flag for CSRF
+WTF_CSRF_ENABLED = True
+
+AUTH_TYPE = AUTH_DB
+
+SQLALCHEMY_DATABASE_URI = conf.get(‘core’, ‘sql_alchemy_conn’)
+CSRF_ENABLED = True
+
+
+AUTH_ROLE_ADMIN = 'Admin'
+AUTH_USER_REGISTRATION = True
+
+AUTH_USER_REGISTRATION_ROLE = 'Viewer'
+
+# APP_THEME = "cyborg.css"
