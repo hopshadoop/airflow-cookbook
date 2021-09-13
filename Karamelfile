@@ -5,7 +5,7 @@ dependencies:
   - recipe: hops_airflow::default
     global:  
       - hopsworks::default
-      - ndb::mysqld
+      - livy::default
   - recipe: hops_airflow::sqoop
     global:  
       - kagent::default
