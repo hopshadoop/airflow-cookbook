@@ -56,16 +56,6 @@ remote_directory "#{node['airflow']['base_dir']}/hopsworks_auth" do
   files_mode 0740
 end
 
-remote_directory "#{node['airflow']['base_dir']}/hopsworks_user_auth" do
-  source "hopsworks_user_auth"
-  owner node['airflow']['user']
-  group node['airflow']['group']
-  mode 0740
-  files_owner node['airflow']['user']
-  files_group node['airflow']['group']
-  files_mode 0740
-end
-
 remote_directory "#{node['airflow']['config']['core']['plugins_folder']}/hopsworks_plugin" do
   source "hopsworks_plugin"
   owner node['airflow']['user']
