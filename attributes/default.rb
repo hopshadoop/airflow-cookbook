@@ -84,7 +84,8 @@ default['airflow']["pip_version"] = true
 
 # Data volume directories
 default['airflow']['data_volume']['root_dir']       = "#{node['data']['dir']}/airflow"
-default['airflow']['data_volume']['dags_dir']       = "#{node['airflow']['data_volume']['root_dir']}/dags"
+#default['airflow']['data_volume']['dags_dir']       = "#{node['airflow']['data_volume']['root_dir']}/dags"
+default['airflow']['data_volume']['dags_dir']       = "/hopsfs/airflow"
 default['airflow']['data_volume']['log_dir']        = "#{node['airflow']['data_volume']['root_dir']}/logs"
 default['airflow']['data_volume']['secrets_dir']    = "#{node['airflow']['data_volume']['root_dir']}/secrets"
 
