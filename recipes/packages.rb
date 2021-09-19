@@ -108,10 +108,12 @@ bash 'install_airflow' do
   cwd "/home/#{node['conda']['user']}"
   code <<-EOF
 #      set -e
-      #{node['conda']['base_dir']}/envs/airflow/bin/pip install --no-cache-dir setuptools==56.2.0 -y
-      #{node['conda']['base_dir']}/envs/airflow/bin/pip install --no-cache-dir apache-airflow==#{node['airflow']['version']} --constraint #{node['airflow']['url']} --upgrade-strategy only-if-needed -y
-      #{node['conda']['base_dir']}/envs/airflow/bin/pip install --no-cache-dir Flask-OpenID==1.2.5 -y
-      #{node['conda']['base_dir']}/envs/airflow/bin/pip install --no-cache-dir airflow-exporter==1.3.0 -y
+      #{node['conda']['base_dir']}/envs/airflow/bin/pip install --no-cache-dir setuptools==56.2.0 
+      #{node['conda']['base_dir']}/envs/airflow/bin/pip install --no-cache-dir Flask-OpenID==1.2.5
+      #{node['conda']['base_dir']}/envs/airflow/bin/pip install --no-cache-dir flask-appbuilder==2.2 --upgrade-strategy only-if-needed
+      #{node['conda']['base_dir']}/envs/airflow/bin/pip install --no-cache-dir apache-airflow==#{node['airflow']['version']} --constraint #{node['airflow']['url']} --upgrade-strategy only-if-needed
+      #{node['conda']['base_dir']}/envs/airflow/bin/pip install --no-cache-dir mysqlclient
+      #{node['conda']['base_dir']}/envs/airflow/bin/pip install --no-cache-dir airflow-exporter==1.3.0
     EOF
 end
 
@@ -123,7 +125,7 @@ for operator in node['airflow']['operators'].split(",")
     environment ({'SLUGIFY_USES_TEXT_UNIDECODE' => 'yes',
                   'AIRFLOW_HOME' => node['airflow']['base_dir']})
     code <<-EOF
-      set -e
+      #set -e
       #{node['conda']['base_dir']}/envs/airflow/bin/pip install apache-airflow["#{operator}"]==#{node['airflow']['version']} --constraint #{node['airflow']['url']}
     EOF
   end
