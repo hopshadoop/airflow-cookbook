@@ -67,7 +67,8 @@ bash 'init_airflow_db' do
   code <<-EOF
       set -e
       export AIRFLOW_HOME=#{node['airflow']['base_dir']}
-      #{node['airflow']['bin_path']}/airflow db upgrade
+#      #{node['airflow']['bin_path']}/airflow db upgrade
+      #{node['airflow']['bin_path']}/airflow upgradedb
     EOF
 end
 
