@@ -107,9 +107,11 @@ bash 'install_airflow' do
                 'HOME' => "/home/#{node['conda']['user']}"})
   cwd "/home/#{node['conda']['user']}"
   code <<-EOF
-      set -e
-      #{node['conda']['base_dir']}/envs/airflow/bin/pip install --no-cache-dir apache-airflow==#{node['airflow']['version']} --constraint #{node['airflow']['url']}
-      #{node['conda']['base_dir']}/envs/airflow/bin/pip install --no-cache-dir airflow-exporter==1.3.0
+#      set -e
+      #{node['conda']['base_dir']}/envs/airflow/bin/pip install --no-cache-dir setuptools==56.2.0 -y
+      #{node['conda']['base_dir']}/envs/airflow/bin/pip install --no-cache-dir apache-airflow==#{node['airflow']['version']} --constraint #{node['airflow']['url']} --upgrade-strategy only-if-needed -y
+      #{node['conda']['base_dir']}/envs/airflow/bin/pip install --no-cache-dir Flask-OpenID==1.2.5 -y
+      #{node['conda']['base_dir']}/envs/airflow/bin/pip install --no-cache-dir airflow-exporter==1.3.0 -y
     EOF
 end
 
