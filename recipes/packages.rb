@@ -122,6 +122,7 @@ for operator in node['airflow']['operators'].split(",")
     umask "022"
     user node['conda']['user']
     group node['conda']['group']
+    ignore_failure true
     environment ({'SLUGIFY_USES_TEXT_UNIDECODE' => 'yes',
                   'AIRFLOW_HOME' => node['airflow']['base_dir']})
     code <<-EOF
