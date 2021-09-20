@@ -102,6 +102,7 @@ bash 'install_airflow' do
   umask "022"
   user node['conda']['user']
   group node['conda']['group']
+  ignore_failure true
   environment ({'SLUGIFY_USES_TEXT_UNIDECODE' => 'yes',
                 'AIRFLOW_HOME' => node['airflow']['base_dir'],
                 'HOME' => "/home/#{node['conda']['user']}"})
@@ -109,10 +110,7 @@ bash 'install_airflow' do
   code <<-EOF
 #      set -e
       #{node['conda']['base_dir']}/envs/airflow/bin/pip install --no-cache-dir setuptools==57.0.5
-#      #{node['conda']['base_dir']}/envs/airflow/bin/pip install --no-cache-dir Flask-OpenID==1.2.5
-#      #{node['conda']['base_dir']}/envs/airflow/bin/pip install --no-cache-dir flask-appbuilder==2.2 --upgrade-strategy only-if-needed
       #{node['conda']['base_dir']}/envs/airflow/bin/pip install --no-cache-dir apache-airflow==#{node['airflow']['version']} --constraint #{node['airflow']['url']}
-#      #{node['conda']['base_dir']}/envs/airflow/bin/pip install --no-cache-dir mysqlclient
       #{node['conda']['base_dir']}/envs/airflow/bin/pip install --no-cache-dir airflow-exporter==1.3.0
     EOF
 end
