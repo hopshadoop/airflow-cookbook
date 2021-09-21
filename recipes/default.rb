@@ -123,7 +123,21 @@ crypto_dir = x509_helper.get_crypto_dir(node['airflow']['user'])
 kagent_hopsify "Generate x.509" do
   user node['airflow']['user']
   crypto_directory crypto_dir
-  common_name "#{instance_id}.#{service_fqdn}"
+#  common_name "#{instance_id}.#{service_fqdn}"
   action :generate_x509
   not_if { node["kagent"]["enabled"] == "false" }
 end
+
+# # Register with consul
+# if service_discovery_enabled()
+#   # Register airflow webserver with Consul
+#   consul_service "Registering Airflow Webserver with Consul" do
+#     service_definition "airflow-webserver.hcl.erb"
+#     action :register
+#   end
+#   # Register airflow scheduler with Consul
+#   consul_service "Registering Airflow Scheduler with Consul" do
+#     service_definition "airflow-scheduler.hcl.erb"
+#     action :register
+#   end
+# end

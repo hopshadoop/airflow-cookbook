@@ -1,0 +1,19 @@
+services = [
+    {
+        id = "airflow-scheduler/metrics"
+        name = "airflow-scheduler"
+        tags = [
+            "monitoring"
+        ]
+        port = <%= node['airflow']['config']['celery']['worker_log_server_port'] %>
+        check = {
+            id = "airflow-scheduler-check"
+            name = "Health check for Online feature store"
+            http = "http://localhost:<%= node['airflow']['config']['celery']['worker_log_server_port'] %>/health"
+            interval = "20s"
+            timeout = "20s"
+            status = "passing"
+        }
+    }
+]
+
