@@ -114,3 +114,16 @@ if not node['airflow']['config']['core']['load_examples']
     only_if "test -d #{examples_dir}", :user => "root"
   end
 end  
+
+# Generate a certificate
+instance_id = private_recipe_ips("hops_airflow", "default").sort.find_index(my_private_ip())
+service_fqdn = consul_helper.get_service_fqdn("airflow-webserver")
+
+crypto_dir = x509_helper.get_crypto_dir(node['airflow']['user'])
+kagent_hopsify "Generate x.509" do
+  user node['airflow']['user']
+  crypto_directory crypto_dir
+  common_name "#{instance_id}.#{service_fqdn}"
+  action :generate_x509
+  not_if { node["kagent"]["enabled"] == "false" }
+end
