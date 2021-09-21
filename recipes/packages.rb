@@ -108,7 +108,7 @@ bash 'install_airflow' do
   cwd "/home/#{node['conda']['user']}"
   code <<-EOF
       set -e
-      #{node['conda']['base_dir']}/envs/airflow/bin/pip install --no-cache-dir apache-airflow==#{node['airflow']['version']} --constraint #{node['airflow']['contraints_url']}
+      #{node['conda']['base_dir']}/envs/airflow/bin/pip install --no-cache-dir apache-airflow==#{node['airflow']['version']} --constraint #{node['airflow']['constraints_url']}
     EOF
 end
 
