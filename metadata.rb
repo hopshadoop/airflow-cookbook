@@ -34,7 +34,6 @@ depends 'java'
 
 recipe           "default", "Configures an Airflow Server"
 recipe           "install", "Installs an Airflow Server"
-recipe           "sqoop", "Installs and onfigures Sqoop and the Sqoop metastore service"
 recipe           "purge", "Removes and deletes an installed Airflow Server"
 
 attribute "airflow/dir",

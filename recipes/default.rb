@@ -148,9 +148,13 @@ end
 # group on this directory, means the 'glassfish' user cannot perform 'ls' on this directory
 # to find out other project's secret keys
 
-hopsworksUser="glassfish"
-if 
-hopsworksUser= node["hopsworks"]["user"]
+hopsworksUser = "glassfish"
+if node.attribute?("hopsworks")
+  if node['hopsworks'].attribute?("user")
+    hopsworksUser = node['hopsworks']['user']
+  end
+end
+
 
 hops_hdfs_directory "/user/airflow" do
   action :create_as_superuser
