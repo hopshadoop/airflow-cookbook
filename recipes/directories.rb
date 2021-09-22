@@ -95,15 +95,15 @@ bash 'Move airflow logs to data volume' do
   user 'root'
   code <<-EOH
     set -e
-    mv -f #{node["airflow"]["config"]["core"]["base_log_folder"]}/* #{node['airflow']['data_volume']['log_dir']}
-    rm -rf #{node["airflow"]["config"]["core"]["base_log_folder"]}
+    mv -f #{node["airflow"]["config"]["logging"]["base_log_folder"]}/* #{node['airflow']['data_volume']['log_dir']}
+    rm -rf #{node["airflow"]["config"]["logging"]["base_log_folder"]}
   EOH
   only_if { conda_helpers.is_upgrade }
-  only_if { File.directory?(node["airflow"]["config"]["core"]["base_log_folder"])}
-  not_if { File.symlink?(node["airflow"]["config"]["core"]["base_log_folder"])}
+  only_if { File.directory?(node["airflow"]["config"]["logging"]["base_log_folder"])}
+  not_if { File.symlink?(node["airflow"]["config"]["logging"]["base_log_folder"])}
 end
 
-link node['airflow']["config"]["core"]["base_log_folder"] do
+link node['airflow']["config"]["logging"]["base_log_folder"] do
   owner node['airflow']['user']
   group node['airflow']['group']
   mode '0750'

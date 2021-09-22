@@ -95,7 +95,7 @@ default['airflow']["config"]["core"]["airflow_home"] = node['airflow']["base_dir
 #default['airflow']["config"]["core"]["dags_folder"] = "#{node['airflow']["config"]["core"]["airflow_home"]}/dags"
 default['airflow']["config"]["core"]["dags_folder"] = "/hopsfs/user/airflow"
 # The folder where airflow should store its log files. This location
-default['airflow']["config"]["core"]["base_log_folder"]  = node['airflow']["base_dir"] + "/logs"
+default['airflow']["config"]["logging"]["base_log_folder"]  = node['airflow']["base_dir"] + "/logs"
 
 # Folder where airflow will store Project user secrets
 default['airflow']['secrets_dir']                    = "#{node['airflow']['base_dir']}/secrets"
