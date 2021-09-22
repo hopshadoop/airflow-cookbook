@@ -154,7 +154,7 @@ default['airflow']["config"]["core"]["dagbag_import_timeout"] = 60
 default['airflow']["config"]["operators"]["default_owner"]  = 'airflow'
 
 
-default['airflow']["config"]["admin"]["hide_sensitive_variable_fields"] = true
+default['airflow']["config"]["core"]["hide_sensitive_variable_fields"] = true
 default['airflow']["config"]["github_enterprise"]["api_rev"] = 'v3'
 
 # The executor class that airflow should use. Choices include
@@ -225,7 +225,7 @@ default['airflow']["config"]["celery"]["worker_log_server_port"]  = 8793
 # it `airflow flower`. This defines the port that Celery Flower runs on
 default['airflow']["config"]["celery"]["flower_port"]  = 5555
 # Default queue that tasks get assigned to and that worker listen on.
-default['airflow']["config"]["celery"]["default_queue"]  = "default"
+default['airflow']["config"]["operators"]["default_queue"]  = "default"
 
 #
 # Reverse Http Proxy
@@ -244,7 +244,7 @@ default['airflow']["config"]["scheduler"]["job_heartbeat_sec"]  = 5
 # The scheduler can run multiple threads in parallel to schedule dags.
 # Tthis defines how many threads will run. However airflow will never
 # use more threads than the amount of cpu cores available.
-default['airflow']["config"]["scheduler"]["max_threads"]  = 2
+default['airflow']["config"]["scheduler"]["parsing_processes"]  = 2
 # Parse and schedule each file no faster than this interval.
 default['airflow']["config"]["scheduler"]["min_file_process_interval"]  = 10
 # How often in seconds to scan the DAGs directory for new files.
