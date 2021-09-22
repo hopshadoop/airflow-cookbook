@@ -141,3 +141,38 @@ end
 #     action :register
 #   end
 # end
+
+
+# /srv/hops/airflow/dags is a private directory - each project will have its own
+# directory owned by 'glassfish' with a secret key as a name. No read permissions for
+# group on this directory, means the 'glassfish' user cannot perform 'ls' on this directory
+# to find out other project's secret keys
+
+hopsworksUser="glassfish"
+if 
+hopsworksUser= node["hopsworks"]["user"]
+
+hops_hdfs_directory "/user/airflow" do
+  action :create_as_superuser
+  owner hopsworksUser
+  group node["airflow"]["group"]
+  mode "1775"
+end
+
+
+# directory node['airflow']['data_volume']['dags_dir']
+#  do
+#   owner node["airflow"]["user"]
+#   group node["airflow"]["group"]
+#   mode "730"
+#   recursive true
+#   action :create
+# end
+
+link node["airflow"]["config"]["core"]["dags_folder"] do
+  owner node["airflow"]["user"]
+  group node["airflow"]["group"]
+  mode "730"
+  to node['airflow']['data_volume']['dags_dir']
+end
+

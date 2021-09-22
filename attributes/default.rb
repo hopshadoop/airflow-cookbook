@@ -92,8 +92,8 @@ default['airflow']['data_volume']['secrets_dir']    = "#{node['airflow']['data_v
 #  The home folder for airflow, default is ~/airflow
 default['airflow']["config"]["core"]["airflow_home"] = node['airflow']["base_dir"]
 # The folder where your airflow pipelines live, most likely a subfolder in a code repository
-#default['airflow']["config"]["core"]["dags_folder"] = "#{node['airflow']["config"]["core"]["airflow_home"]}/dags"
-default['airflow']["config"]["core"]["dags_folder"] = "/hopsfs/user/airflow"
+default['airflow']["config"]["core"]["dags_folder"] = "#{node['airflow']["config"]["core"]["airflow_home"]}/dags"
+#default['airflow']["config"]["core"]["dags_folder"] = "/hopsfs/user/airflow"
 # The folder where airflow should store its log files. This location
 default['airflow']["config"]["logging"]["base_log_folder"]  = node['airflow']["base_dir"] + "/logs"
 
