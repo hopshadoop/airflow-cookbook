@@ -84,27 +84,3 @@ attribute "airflow/config/scheduler/dag_dir_list_interval",
           :description => "How often in seconds to scan the DAGs directory for new files.",
           :type => 'string'
 
-attribute "sqoop/dir",
-          :description => "Installation directory for the sqoop binaries/config files",
-          :type => 'string'
-
-attribute "sqoop/user",
-          :description => "Sqoop username to run service as",
-          :type => 'string'
-
-attribute "sqoop/user_id",
-          :description => "sqoop user id. Default: 1513",
-          :type => 'string'
-
-attribute "sqoop/group",
-          :description => "Sqoop group to run service as",
-          :type => 'string'
-
-attribute "sqoop/group_id",
-          :description => "sqoop group id. Default: 1509",
-          :type => 'string'
-
-attribute "sqoop/port",
-          :description => "Sqoop metastore port",
-          :type => 'string'
-

@@ -6,6 +6,3 @@ dependencies:
     global:  
       - hopsworks::default
       - livy::default
-  - recipe: hops_airflow::sqoop
-    global:  
-      - kagent::default
