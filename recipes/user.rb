@@ -53,6 +53,12 @@ if node.attribute? "hopsworks"
     end
 end
 
+#
+# Glassfish user needs to read the airflow dags, so we add it to the airflow group
+# However, we need to do it before installing the glassfish server, as glassfish caches the groups
+# that the glassfish user is a member of - requiring a reboot. To avoid the reboot, add the glassfish
+# user to the airflow group here.
+#
 group node['airflow']['group'] do
   action :modify
   members [hopsworksUser]  
