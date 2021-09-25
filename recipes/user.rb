@@ -46,12 +46,7 @@ group node['hops']['group'] do
   not_if { node['install']['external_users'].casecmp("true") == 0 }
 end
 
-hopsworksUser = "glassfish"
-if node.attribute? "hopsworks"
-    if node["hopsworks"].attribute? "user"
-       hopsworksUser = node['hopsworks']['user']
-    end
-end
+hw = "glassfish"
 
 #
 # Glassfish user needs to read the airflow dags, so we add it to the airflow group
@@ -59,20 +54,20 @@ end
 # that the glassfish user is a member of - requiring a reboot. To avoid the reboot, add the glassfish
 # user to the airflow group here.
 #
-group node['hopsworks']['group'] do
-  gid node['hopsworks']['group_id']
+group hw do
+  gid 1517
   action :create
-  not_if "getent group #{node['hopsworks']['group']}"
+  not_if "getent group #{hw}"
   not_if { node['install']['external_users'].casecmp("true") == 0 }
 end
-user node['hopsworks']['user'] do
-  home node['glassfish']['user-home']
-  uid node['hopsworks']['user_id']
-  gid node['hopsworks']['group']
+user hw do
+  home "/home/glassfish"
+  uid 1522
+  gid 1517
   action :create
   shell "/bin/bash"
   manage_home true
-  not_if "getent passwd #{node['hopsworks']['user']}"
+  not_if "getent passwd #{hw}"
   not_if { node['install']['external_users'].casecmp("true") == 0 }
 end
 
