@@ -23,6 +23,13 @@ if node.attribute? "hopsworks"
     end
 end
 
+group node['airflow']['group'] do
+  action :modify
+  members [#{hopsworksGroup}]  
+  append true
+  not_if { node['install']['external_users'].casecmp("true") == 0 }
+end
+
 # Directory where Hopsworks will store JWT for projects
 # Directory structure will be secrets/SECRET_PROJECT_ID/project_user.jwt
 # secrets dir is not readable so someone must only guess the SECRET_PROJECT_ID
@@ -221,3 +228,7 @@ link node["airflow"]["config"]["core"]["dags_folder"] do
   to node['airflow']['data_volume']['dags_dir']
 end
 
+# Force reload of glassfish, so that secrets work
+kagent_config "glassfish-domain1" do
+  action :systemd_reload
+end

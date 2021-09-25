@@ -54,29 +54,26 @@ hw = "glassfish"
 # that the glassfish user is a member of - requiring a reboot. To avoid the reboot, add the glassfish
 # user to the airflow group here.
 #
-group hw do
-  gid 1517
-  action :create
-  not_if "getent group #{hw}"
-  not_if { node['install']['external_users'].casecmp("true") == 0 }
-end
-user hw do
-  home "/home/glassfish"
-  uid 1522
-  gid 1517
-  action :create
-  shell "/bin/bash"
-  manage_home true
-  not_if "getent passwd #{hw}"
-  not_if { node['install']['external_users'].casecmp("true") == 0 }
-end
+# group hw do
+#   gid 1517
+#   action :create
+#   not_if "getent group #{hw}"
+#   not_if { node['install']['external_users'].casecmp("true") == 0 }
+# end
+# user hw do
+#   home "/home/glassfish"
+#   uid 1522
+#   gid 1517
+#   action :create
+#   shell "/bin/bash"
+#   manage_home true
+#   not_if "getent passwd #{hw}"
+#   not_if { node['install']['external_users'].casecmp("true") == 0 }
+# end
 
-
-
-
-group node['airflow']['group'] do
-  action :modify
-  members ["glassfish"]  
-  append true
-  not_if { node['install']['external_users'].casecmp("true") == 0 }
-end
+# group node['airflow']['group'] do
+#   action :modify
+#   members ["glassfish"]  
+#   append true
+#   not_if { node['install']['external_users'].casecmp("true") == 0 }
+# end
