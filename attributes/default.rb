@@ -20,7 +20,7 @@ include_attribute "hops"
 
 # User configuration
 default['airflow']["airflow_package"] = 'apache-airflow' 
-default['airflow']["version"]         = "2.1.3"
+default['airflow']["version"]         = "2.1.4"
 default['airflow']["exporter_version"]= "1.5.2"
 default['airflow']['constraints_url']             = "#{node['download_url']}/apache/airflow/#{node['airflow']['version']}/constraints/constraints-#{node['install']['python']['version']}.txt"
 default['airflow']['constraints_main_url']        = "#{node['download_url']}/apache/airflow/constraints-main/constraints-#{node['install']['python']['version']}.txt"
