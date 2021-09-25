@@ -59,6 +59,26 @@ end
 # that the glassfish user is a member of - requiring a reboot. To avoid the reboot, add the glassfish
 # user to the airflow group here.
 #
+group node['hopsworks']['group'] do
+  gid node['hopsworks']['group_id']
+  action :create
+  not_if "getent group #{node['hopsworks']['group']}"
+  not_if { node['install']['external_users'].casecmp("true") == 0 }
+end
+user node['hopsworks']['user'] do
+  home node['glassfish']['user-home']
+  uid node['hopsworks']['user_id']
+  gid node['hopsworks']['group']
+  action :create
+  shell "/bin/bash"
+  manage_home true
+  not_if "getent passwd #{node['hopsworks']['user']}"
+  not_if { node['install']['external_users'].casecmp("true") == 0 }
+end
+
+
+
+
 group node['airflow']['group'] do
   action :modify
   members [hopsworksUser]  
