@@ -1,7 +1,8 @@
 dependencies: 
   - recipe: hops_airflow::install
     global:  
-      - hops::install
+      - hopsworks::install
+      - hops::install      
   - recipe: hops_airflow::default
     global:  
       - hopsworks::default

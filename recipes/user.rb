@@ -45,3 +45,17 @@ group node['hops']['group'] do
   append true
   not_if { node['install']['external_users'].casecmp("true") == 0 }
 end
+
+hopsworksUser = "glassfish"
+if node.attribute? "hopsworks"
+    if node["hopsworks"].attribute? "user"
+       hopsworksUser = node['hopsworks']['user']
+    end
+end
+
+group node['airflow']['group'] do
+  action :modify
+  members [hopsworksUser]  
+  append true
+  not_if { node['install']['external_users'].casecmp("true") == 0 }
+end

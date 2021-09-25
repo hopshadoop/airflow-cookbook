@@ -22,18 +22,6 @@ if node.attribute? "hopsworks"
        hopsworksGroup = node['hopsworks']['group']
     end
 end
-hopsworksUser = "glassfish"
-if node.attribute? "hopsworks"
-    if node["hopsworks"].attribute? "user"
-       hopsworksUser = node['hopsworks']['user']
-    end
-end
-
-group node['airflow']['group'] do
-  action :modify
-  members [hopsworksUser]  
-  append true
-end
 
 # Directory where Hopsworks will store JWT for projects
 # Directory structure will be secrets/SECRET_PROJECT_ID/project_user.jwt
