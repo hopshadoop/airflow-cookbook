@@ -10,8 +10,6 @@ bash 'create_airflow_db' do
       #{exec} -e \"GRANT NDB_STORED_USER ON *.* TO '#{node['airflow']['mysql_user']}'@'localhost'\"
       #{exec} -e \"GRANT NDB_STORED_USER ON *.* TO '#{node['airflow']['mysql_user']}'@'127.0.0.1'\"
       #{exec} -e \"GRANT ALL PRIVILEGES ON airflow.* TO '#{node['airflow']['mysql_user']}'@'127.0.0.1'\"
-      #{exec} -e \"GRANT SELECT PRIVILEGES ON hopsworks.project_username TO '#{node['airflow']['mysql_user']}'@'localhost'\"
-      #{exec} -e \"GRANT SELECT PRIVILEGES ON hopsworks.project_username TO '#{node['airflow']['mysql_user']}'@'127.0.0.1'\"
     EOH
   not_if "#{exec} -e 'show databases' | grep airflow"	
 end
