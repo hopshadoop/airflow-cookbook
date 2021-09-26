@@ -25,7 +25,7 @@ end
 
 group node['airflow']['group'] do
   action :modify
-  members [#{hopsworksGroup}]  
+  members ["#{hopsworksGroup}"]  
   append true
   not_if { node['install']['external_users'].casecmp("true") == 0 }
 end
