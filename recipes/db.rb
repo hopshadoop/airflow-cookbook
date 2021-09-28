@@ -7,7 +7,7 @@ bash 'create_airflow_db' do
 # utf8 does not work with ndbcluster, as the ORM tries to perform alter table on a column (connection.password)
 # to increase its size to 5000 chars, and it exceeds the max-row-size for ndbcluster. Stick with 'latin1'.
 #      #{exec} -e \"CREATE DATABASE IF NOT EXISTS airflow CHARACTER SET utf8 COLLATE utf8_general_ci\"	p
-      #{exec} -e \"SET storage_engine=innodb; CREATE DATABASE IF NOT EXISTS airflow CHARACTER SET utf8 COLLATE utf8_general_ci\"	
+      #{exec} -e \"SET default_storage_engine=innodb; CREATE DATABASE IF NOT EXISTS airflow CHARACTER SET utf8 COLLATE utf8_general_ci\"	
 #      #{exec} -e \"CREATE DATABASE IF NOT EXISTS airflow CHARACTER SET latin1\"	
       #{exec} -e \"CREATE USER IF NOT EXISTS '#{node['airflow']['mysql_user']}'@'localhost' IDENTIFIED WITH mysql_native_password BY '#{node['airflow']['mysql_password']}'\"
       #{exec} -e \"CREATE USER IF NOT EXISTS '#{node['airflow']['mysql_user']}'@'127.0.0.1' IDENTIFIED WITH mysql_native_password BY '#{node['airflow']['mysql_password']}'\"
