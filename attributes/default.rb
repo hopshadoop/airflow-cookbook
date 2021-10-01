@@ -152,7 +152,9 @@ default['airflow']['config']['core']['load_examples'] = false
 default['airflow']['config']['core']['default_timezone'] = "system"
 
 # API config section in airflow.cfg
-default['airflow']['config']['api']['auth_backend'] = "hopsworks_auth.hopsworks_jwt_auth"
+#default['airflow']['config']['api']['auth_backend'] = "hopsworks_auth.hopsworks_jwt_auth"
+# airflow.api.auth.backend.default - no authentication for API calls
+default['airflow']['config']['api']['auth_backend'] = "airflow.api.auth.backend.default"
 
 # The base url of your website as airflow cannot guess what domain or
 # cname you are using. This is used in automated emails that
