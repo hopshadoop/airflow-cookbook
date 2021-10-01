@@ -21,7 +21,7 @@ EnvironmentFile=<%= @env_path %>
 User=<%= @user %>
 Group=<%= @group %>
 ExecStart=<%= @base_path %>/airflow_runner.sh webserver --pid <%= @run_path %>/airflow-webserver.pid -D
-Type=forking
+Type=simple
 Restart=always
 
 [Install]

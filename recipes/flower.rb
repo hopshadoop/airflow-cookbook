@@ -12,16 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-if (node["airflow"]["init_system"] == "upstart") 
-  service_target = "/etc/init/airflow-flower.conf"
-  service_template = "init_system/upstart/airflow-flower.conf.erb"
-elsif (node["airflow"]["init_system"] == "systemd" && node["platform"] == "ubuntu" )
-  service_target = "/lib/systemd/system/airflow-flower.service"
-  service_template = "init_system/systemd/airflow-flower.service.erb"
-else
-  service_target = "/usr/lib/systemd/system/airflow-flower.service"
-  service_template = "init_system/systemd/airflow-flower.service.erb"
-end
+service_target = "/lib/systemd/system/airflow-flower.service"
+service_template = "init_system/systemd/airflow-flower.service.erb"
 
 template service_target do
   source service_template

@@ -20,7 +20,6 @@ template "airflow_services_env" do
   group "root"
   mode "0644"
   variables({
-    :is_upstart => node["airflow"]["is_upstart"],
     :config => node["airflow"]["config"]
   })
 end

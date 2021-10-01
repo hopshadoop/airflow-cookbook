@@ -34,9 +34,6 @@
 # Accept-Language: sv-SE,sv;q=0.9,en-US;q=0.8,en;q=0.7,de-DE;q=0.6,de;q=0.5
 # Cookie: treeForm_tree-hi=treeForm:tree:applications; SESSION=e5b3e5fefc27d4583d6c0af38237; JSESSIONIDSSO=FDC1F03DF02AAC4187ABFEF8A376DADD; SESSION-ADMIN=e5b48f77f64fafb3ad236f132f3f; SESSION-KMON=e5b620549acc6022636c8342a56f; session=.eJyrVorPTFGyqlZSSFKyUooKyTaMDEk28M1Kr_CrCjT1q_LLAsIMX6NQUz-XlBw_98gKv5CwbL8qR1ulWh2l5OKitPiS_OzUPLgR_i7ZBn4uQblRuYHGUe6BFZHhvgaRVa7Gkbm-Jr4u2ZV-VdmGUVnJpr5VyUDaF8Q29nO0BRpXCwBH7yzx.DoTQQg.X4efSJxY-hmgYs_pIlzjG0zuZrw
 
-
-# CREATE VIEW project_username AS SELECT CONCAT(project.projectname, "__", users.username) as project_username, users.password, users.salt from project_team, users, project WHERE project_team.team_member = users.email AND project.id=project_team.project_id;
- 
 from future.utils import native
 
 import flask_login
