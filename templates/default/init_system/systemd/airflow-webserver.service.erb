@@ -20,7 +20,7 @@ After=network.target <%= @deps %>
 EnvironmentFile=<%= @env_path %>
 User=<%= @user %>
 Group=<%= @group %>
-ExecStart=<%= @base_path %>/airflow_runner.sh webserver --pid <%= @run_path %>/airflow-webserver.pid -D
+ExecStart=<%= @base_path %>/airflow_runner.sh webserver --pid <%= @run_path %>/airflow-webserver.pid 
 Type=simple
 Restart=always
 
