@@ -22,7 +22,6 @@ import time
 
 from airflow.models import BaseOperator
 from airflow.utils.decorators import apply_defaults
-from airflow.contrib.operators.sqoop_operator import SqoopOperator
 from airflow.exceptions import AirflowException
 
 from hopsworks_plugin.hooks.hopsworks_hook import HopsworksHook
@@ -357,56 +356,3 @@ class HopsworksModelServingInstance(HopsworksAbstractOperator):
             if model_name == si['name']:
                 return si
         return None
-                    
-class HopsworksSqoopOperator(SqoopOperator):
-    """
-    Operator to run Sqoop jobs. It configures some environment
-    variables necessary for Sqoop to run in Hopsworks and
-    MapReduce staging directory to a Project's directory
-
-    :param project_id: Hopsworks Project ID this job is associated with. Either this or project_name.
-    :type project_id: int
-    :param project_name: Hopsworks Project name this job is associated with. Either this or project_id.
-    :type project_name: str
-    """
-    
-    PROJECT_STAGING = '/Projects/{project_name}/Resources/.mrStaging'
-    
-    @apply_defaults
-    def __init__(self, hopsworks_conn_id = 'hopsworks_default',
-                 project_id = None,
-                 project_name = None,
-                 *args,
-                 **kwargs):
-        super(HopsworksSqoopOperator, self).__init__(*args, **kwargs)
-        self.hopsworks_conn_id = hopsworks_conn_id
-        self.project_id = project_id
-        self.project_name = project_name
-        if 'hw_api_key' in self.params:
-            self.hw_api_key = self.params['hw_api_key']
-        else:
-            self.hw_api_key = None        
-    
-    def execute(self, context):
-        self.log.debug("Preparing Sqoop job")
-        hook = HopsworksHook(self.hopsworks_conn_id, self.project_id, self.project_name, self.owner, self.hw_api_key)
-        if self.project_name is None:
-            self.project_name = hook.project_name
-
-        project_specific_user = "{0}__{1}".format(self.project_name, self.owner)
-        # Set impersonation
-        os.environ['HADOOP_USER_NAME'] = project_specific_user
-
-        # Generate secret dir and export MATERIAL_DIRECTORY
-        secret_dir = hook._generate_secret_dir()
-        os.environ['MATERIAL_DIRECTORY'] = secret_dir
-
-        # Set per project staging directory
-        staging_dir = HopsworksSqoopOperator.PROJECT_STAGING.format(project_name=self.project_name)
-        self.properties = {} if self.properties is None else self.properties
-        self.properties['yarn.app.mapreduce.am.staging-dir'] = staging_dir
-        self.properties['yarn.app.mapreduce.client.max-retries'] = 10
-        
-        self.log.debug("Calling SqoopOperator")
-        super(HopsworksSqoopOperator, self).execute(context)
-
