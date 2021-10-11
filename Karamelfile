@@ -11,6 +11,3 @@ dependencies:
   - recipe: hops_airflow::worker
     global:  
       - hops_airflow::default
-  - recipe: hops_airflow::sqoop
-    global:  
-      - kagent::default

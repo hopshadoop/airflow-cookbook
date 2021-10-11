@@ -29,20 +29,6 @@ default['airflow']['group_id']        = '1508'
 default['airflow']['mysql_user']      = "airflow_db"
 default['airflow']['mysql_password']  = "airflow_db"
 
-# Sqoop setup
-default["sqoop"]["version"]           = "1.4.7"
-default['sqoop']['user']              = node['install']['user'].empty? ? "sqoop" : node['install']['user']
-default['sqoop']['user_id']           = '1513'
-default['sqoop']['group']             = node['install']['user'].empty? ? "sqoop" : node['install']['user']
-default['sqoop']['group_id']          = '1509'
-default["sqoop"]["dir"]               = node['install']['dir'].empty? ? "/srv/hops" : node['install']['dir']
-default["sqoop"]["home"]              = node['sqoop']['dir'] + "/sqoop-" +  node['sqoop']['version'] + ".bin__hadoop-2.6.0"
-default["sqoop"]["base_dir"]          = node['sqoop']['dir'] + "/sqoop" 
-# sqoop-1.4.7.bin__hadoop-2.6.0.tar.gz
-default['sqoop']['url']               = "#{node['download_url']}/sqoop-#{node['sqoop']['version']}.bin__hadoop-2.6.0.tar.gz"
-default["sqoop"]["port"]              = "16000"
-
-
 ## Remove devel_hadoop which brings snakebite[kerberos] which does not work on Python 3
 default['airflow']["operators"]       = "hive,mysql,kubernetes,password,hdfs,ssh,jdbc,mysql,crypto"
 
