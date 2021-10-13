@@ -60,17 +60,13 @@ end
 # Install dependencies
 dependencies_to_install.each do |value|
   package_to_install = ''
-  version_to_install = ''
   value.each do |key, val|
     if key.to_s == 'name'
       package_to_install = val
-    else
-      version_to_install = val
     end
   end
   package package_to_install do
     action  :install
-    version version_to_install
   end
 end
 
