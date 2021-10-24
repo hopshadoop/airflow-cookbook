@@ -17,7 +17,11 @@ include_recipe "hops_airflow::db"
 include_recipe "hops_airflow::packages"
 
 hopsworksUser = "glassfish"
+hopsworksGroup = "glassfish"
 if node.attribute? "hopsworks"
+    if node["hopsworks"].attribute? "group"
+       hopsworksGroup = node['hopsworks']['group']
+    end
     if node["hopsworks"].attribute? "user"
        hopsworksUser = node['hopsworks']['user']
     end
@@ -25,9 +29,51 @@ end
 
 group node['airflow']['group'] do
   action :modify
-  members [hopsworksUser]  
+  members [hopsworksGroup]    
   append true
+  not_if { node['install']['external_users'].casecmp("true") == 0 }  
 end
+
+# Directory where Hopsworks will store JWT for projects
+# Directory structure will be secrets/SECRET_PROJECT_ID/project_user.jwt
+# secrets dir is not readable so someone must only guess the SECRET_PROJECT_ID
+directory "#{node['airflow']['data_volume']['secrets_dir']}" do
+  owner node['airflow']['user']
+  group hopsworksGroup
+  mode 0130
+  action :create
+end
+
+bash 'Move airflow secrets to data volume' do
+  user 'root'
+    code <<-EOH
+    set -e
+    mv -f #{node['airflow']['secrets_dir']}/* #{node['airflow']['data_volume']['secrets_dir']}
+  EOH
+    only_if { conda_helpers.is_upgrade }
+    only_if { File.directory?(node['airflow']['secrets_dir'])}
+    not_if { File.symlink?(node['airflow']['secrets_dir'])}
+    not_if { Dir.empty?(node['airflow']['secrets_dir']) }
+end
+
+bash 'Delete airflow secrets' do
+  user 'root'
+    code <<-EOH
+    set -e
+    rm -rf #{node['airflow']['secrets_dir']}
+  EOH
+    only_if { conda_helpers.is_upgrade }
+    only_if { File.directory?(node['airflow']['secrets_dir'])}
+    not_if { File.symlink?(node['airflow']['secrets_dir'])}
+end
+
+link node['airflow']['secrets_dir'] do
+  owner node['airflow']['user']
+  group node['airflow']['group']
+  mode 0130
+    to node['airflow']['data_volume']['secrets_dir']
+end
+
 
 include_recipe "hops_airflow::config"
 include_recipe "hops_airflow::services"
@@ -46,7 +92,6 @@ template "airflow_services_env" do
   group "root"
   mode "0644"
   variables({
-    :is_upstart => node["airflow"]["is_upstart"],
     :config => node["airflow"]["config"]
   })
 end
@@ -57,6 +102,8 @@ end
 #
 bash 'init_airflow_db' do
   user node['airflow']['user']
+  retry_delay 20
+  retries 1
   code <<-EOF
       set -e
       export AIRFLOW_HOME=#{node['airflow']['base_dir']}
@@ -93,3 +140,29 @@ if not node['airflow']['config']['core']['load_examples']
     only_if "test -d #{examples_dir}", :user => "root"
   end
 end  
+
+hops_hdfs_directory "/user/airflow" do
+  action :create_as_superuser
+  owner hopsworksUser
+  group node["airflow"]["group"]
+  mode "1775"
+end
+
+hops_hdfs_directory "/user/airflow/dags" do
+  action :create_as_superuser
+  owner hopsworksUser
+  group node["airflow"]["group"]
+  mode "1370"
+end
+
+link node["airflow"]["config"]["core"]["dags_folder"] do
+  owner node["airflow"]["user"]
+  group node["airflow"]["group"]
+  mode "730"
+  to node['airflow']['data_volume']['dags_dir']
+end
+
+# Force reload of glassfish, so that secrets work
+kagent_config "glassfish-domain1" do
+  action :systemd_reload
+end

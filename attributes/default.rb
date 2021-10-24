@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+include_attribute "conda"
 include_attribute "kagent"
 include_attribute "ndb"
 include_attribute "hops"
-
 
 # User configuration
 default['airflow']["airflow_package"] = 'apache-airflow' 
@@ -57,7 +57,7 @@ default['airflow']["scheduler_duration"] = 21600
 
 # Python config
 default['airflow']["python_runtime"] = "3"
-default['airflow']["python_version"] = "3.7"
+default['airflow']["python_version"] = node['install']['python']['version']
 default['airflow']["pip_version"] = true
 
 # Configurations stated below are required for this cookbook and will be written to airflow.cfg, you can add more config by using structure like:
@@ -65,7 +65,7 @@ default['airflow']["pip_version"] = true
 
 # Data volume directories
 default['airflow']['data_volume']['root_dir']       = "#{node['data']['dir']}/airflow"
-default['airflow']['data_volume']['dags_dir']       = "#{node['airflow']['data_volume']['root_dir']}/dags"
+default['airflow']['data_volume']['dags_dir']       = "/hopsfs/user/airflow"
 default['airflow']['data_volume']['log_dir']        = "#{node['airflow']['data_volume']['root_dir']}/logs"
 default['airflow']['data_volume']['secrets_dir']    = "#{node['airflow']['data_volume']['root_dir']}/secrets"
 
@@ -163,7 +163,7 @@ default['airflow']["config"]["webserver"]["authenticate"] = true
 default['airflow']["config"]["webserver"]["auth_backend"] = "hopsworks_auth.hopsworks_jwt_auth"
 
 # Secret key used to run your flask app
-default['airflow']["config"]["webserver"]["secret_key"]  = "temporary_key"
+default['airflow']["config"]["webserver"]["secret_key"]  = "`openssl rand -hex 30`" 
 # Number of workers to run the Gunicorn web server
 default['airflow']["config"]["webserver"]["workers"]  = 4
 # The worker class gunicorn should use. Choices include

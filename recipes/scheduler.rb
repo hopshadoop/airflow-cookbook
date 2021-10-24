@@ -18,17 +18,8 @@ if exists_local("ndb", "mysqld")
   deps = "mysqld.service"
 end  
 
-if (node["airflow"]["init_system"] == "upstart") 
-  service_target = "/etc/init/airflow-scheduler.conf"
-  service_template = "init_system/upstart/airflow-scheduler.conf.erb"
-
-elsif (node["airflow"]["init_system"] == "systemd" && node["platform"] == "ubuntu" )
-  service_target = "/lib/systemd/system/airflow-scheduler.service"
-  service_template = "init_system/systemd/airflow-scheduler.service.erb"
-else
-  service_target = "/usr/lib/systemd/system/airflow-scheduler.service"
-  service_template = "init_system/systemd/airflow-scheduler.service.erb"
-end
+service_target = "/lib/systemd/system/airflow-scheduler.service"
+service_template = "init_system/systemd/airflow-scheduler.service.erb"
 
 template service_target do
   source service_template
