@@ -163,9 +163,9 @@ class HopsworksLaunchOperator(HopsworksAbstractOperator):
             job_arguments = None,
             *args,
             **kwargs):
-        super(HopsworksLaunchOperator, self).__init__(hopsworks_conn_id,
-                                                      project_id,
-                                                      project_name,
+        super(HopsworksLaunchOperator, self).__init__(hopsworks_conn_id = hopsworks_conn_id,
+                                                      project_id = project_id,
+                                                      project_name = project_name,
                                                       *args,
                                                       **kwargs)
         self.job_name = job_name

@@ -7,3 +7,5 @@ dependencies:
     global:  
       - hopsworks::default
       - livy::default
+      - ndb::mysqld
+      
