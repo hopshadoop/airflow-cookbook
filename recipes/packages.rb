@@ -119,7 +119,7 @@ bash 'patch_for_rondb_max_row_size' do
   user "root"
     code <<-EOF
       set -e
-      perl -pi -e 's/5000/1000/' #{node['conda']['base_dir']}/envs/airflow/lib/python#{node['install']['python']['version']}/site-packages/airflow/migrations/versions/fe461863935f_increase_length_for_connection_password.py
+      perl -pi -e 's/5000/1000/' #{node['conda']['base_dir']}/envs/airflow/lib/python#{node['airflow']['python']['version']}/site-packages/airflow/migrations/versions/fe461863935f_increase_length_for_connection_password.py
     EOF
 end
 
