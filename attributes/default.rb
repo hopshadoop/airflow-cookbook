@@ -18,7 +18,7 @@ include_attribute "ndb"
 include_attribute "hops"
 
 # User configuration
-default['airflow'['python']['version'] = "3.7" # node['install']['python']['version']
+default['airflow']['python']['version'] = "3.7" # node['install']['python']['version']
 default['airflow']["airflow_package"] = 'apache-airflow' 
 default['airflow']["version"]         = "1.10.10"
 default['airflow']['url']             = "#{node['download_url']}/apache/airflow/#{node['airflow']['version']}/constraints/constraints-#{node['airflow']['python']['version']}.txt"
