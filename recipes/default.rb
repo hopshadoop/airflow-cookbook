@@ -158,14 +158,3 @@ hops_hdfs_directory "/user/airflow/dags" do
   mode "1370"
 end
 
-link node["airflow"]["config"]["core"]["dags_folder"] do
-  owner node["airflow"]["user"]
-  group node["airflow"]["group"]
-  mode "730"
-  to node['airflow']['data_volume']['dags_dir']
-end
-
-# Force reload of glassfish, so that secrets work
-kagent_config "glassfish-domain1" do
-  action :systemd_reload
-end

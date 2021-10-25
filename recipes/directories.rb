@@ -134,6 +134,18 @@ directory "#{node['airflow']['data_volume']['secrets_dir']}" do
   action :create
 end
 
+# Directory to store DAGs. Inside this directory, for every project, we create 
+# a symbolic link from here to /hopsfs/Projects/<proj>/Airflow. The link's name is
+# the project name.
+# The directory needs group write privileges as 'glassfish' will create the symbolic link.
+# 'glassfish' user is a member of the airflow group
+directory "#{node['airflow']['data_volume']['dags_dir']}" do
+  owner node['airflow']['user']
+  group node['airflow']['group']
+  mode 0770
+  action :create
+end
+
 bash 'Move airflow secrets to data volume' do
   user 'root'
   code <<-EOH
