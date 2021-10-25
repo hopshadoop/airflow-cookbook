@@ -43,48 +43,6 @@ directory node['airflow']['data_volume']['root_dir'] do
   action :create
 end
 
-# /srv/hops/airflow/dags is a private directory - each project will have its own
-# directory owned by 'glassfish' with a secret key as a name. No read permissions for
-# group on this directory, means the 'glassfish' user cannot perform 'ls' on this directory
-# to find out other project's secret keys
-# directory node['airflow']['data_volume']['dags_dir'] do
-#   owner node["airflow"]["user"]
-#   group node["airflow"]["group"]
-#   mode "730"
-#   recursive true
-#   action :create
-# end
-
-# bash 'Move airflow dags to data volume' do
-#   user 'root'
-#   code <<-EOH
-#     set -e
-#     mv -f #{node["airflow"]["config"]["core"]["dags_folder"]}/* #{node['airflow']['data_volume']['dags_dir']}
-#   EOH
-#   only_if { conda_helpers.is_upgrade }
-#   only_if { File.directory?(node["airflow"]["config"]["core"]["dags_folder"])}
-#   not_if { File.symlink?(node["airflow"]["config"]["core"]["dags_folder"])}
-#   not_if { Dir.empty?(node["airflow"]["config"]["core"]["dags_folder"])}
-# end
-
-# bash 'Delete old airflow dags directory' do
-#   user 'root'
-#   code <<-EOH
-#     set -e
-#     rm -rf #{node["airflow"]["config"]["core"]["dags_folder"]}
-#   EOH
-#   only_if { conda_helpers.is_upgrade }
-#   only_if { File.directory?(node["airflow"]["config"]["core"]["dags_folder"])}
-#   not_if { File.symlink?(node["airflow"]["config"]["core"]["dags_folder"])}
-# end
-
-# link node["airflow"]["config"]["core"]["dags_folder"] do
-#   owner node["airflow"]["user"]
-#   group node["airflow"]["group"]
-#   mode "730"
-#   to node['airflow']['data_volume']['dags_dir']
-# end
-
 directory node['airflow']['data_volume']['log_dir'] do
   owner node['airflow']['user']
   group node['airflow']['group']
