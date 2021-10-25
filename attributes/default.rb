@@ -47,7 +47,6 @@ default['airflow']["scheduler_duration"] = 21600
 
 # Python config
 default['airflow']["python_runtime"] = "3"
-default['airflow']["python_version"] = node['install']['python']['version']
 default['airflow']["pip_version"] = true
 
 # Configurations stated below are required for this cookbook and will be written to airflow.cfg, you can add more config by using structure like:
