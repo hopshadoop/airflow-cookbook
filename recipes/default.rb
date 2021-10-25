@@ -130,7 +130,7 @@ template node['airflow']['base_dir'] + "/create-default-user.sh" do
   mode "0774"
 end
 
-examples_dir = "#{node['conda']['base_dir']}/envs/airflow/lib/python#{node['airflow']['python_version']}/site-packages/airflow/example_dags"
+examples_dir = "#{node['conda']['base_dir']}/envs/airflow/lib/python#{node['airflow']['python']['version']}/site-packages/airflow/example_dags"
 if not node['airflow']['config']['core']['load_examples']
   bash 'remove_examples' do
     user "root"

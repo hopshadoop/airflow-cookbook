@@ -13,7 +13,7 @@
 # limitations under the License.
 
 #python_runtime node["airflow"]["python_runtime"] do
-#  version node["airflow"]["python_version"]
+#  version node["airflow"]["python"]["version"]
 #  provider :system
 #  pip_version node["airflow"]["pip_version"]
 #end
@@ -92,7 +92,7 @@ bash "create_airflow_env" do
   environment ({'HOME' => "/home/#{node['conda']['user']}"})
   cwd "/home/#{node['conda']['user']}"
   code <<-EOF
-    #{node['conda']['base_dir']}/bin/conda create -q -y -n airflow python=#{node['airflow']['python_version']}
+    #{node['conda']['base_dir']}/bin/conda create -q -y -n airflow python=#{node['airflow']['python']['version']}
   EOF
   not_if "test -d #{node['conda']['base_dir']}/envs/airflow", :user => node['conda']['user']
 end

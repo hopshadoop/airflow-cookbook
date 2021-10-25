@@ -18,9 +18,10 @@ include_attribute "ndb"
 include_attribute "hops"
 
 # User configuration
+default['airflow'['python']['version'] = "3.7" # node['install']['python']['version']
 default['airflow']["airflow_package"] = 'apache-airflow' 
 default['airflow']["version"]         = "1.10.10"
-default['airflow']['url']             = "#{node['download_url']}/apache/airflow/#{node['airflow']['version']}/constraints/constraints-#{node['install']['python']['version']}.txt"
+default['airflow']['url']             = "#{node['download_url']}/apache/airflow/#{node['airflow']['version']}/constraints/constraints-#{node['airflow']['python']['version']}.txt"
 default['airflow']['user']            = node['install']['user'].empty? ? 'airflow' : node['install']['user']
 default['airflow']['user_id']         = '1512'
 default['airflow']['group']           = node['install']['user'].empty? ? 'airflow' : node['install']['user']
@@ -57,7 +58,6 @@ default['airflow']["scheduler_duration"] = 21600
 
 # Python config
 default['airflow']["python_runtime"] = "3"
-default['airflow']["python_version"] = node['install']['python']['version']
 default['airflow']["pip_version"] = true
 
 # Configurations stated below are required for this cookbook and will be written to airflow.cfg, you can add more config by using structure like:
