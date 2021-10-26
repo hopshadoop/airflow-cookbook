@@ -56,65 +56,6 @@ class HopsworksAbstractOperator(BaseOperator):
     def _get_hook(self):
         return HopsworksHook(self.hopsworks_conn_id, self.project_id, self.project_name, self.owner, self.hw_api_key)
 
-    
-class HopsworksFeatureValidationResult(HopsworksAbstractOperator):
-    """
-    Operator to fetch data validation result of a Feature Group.
-    Data Validation job is launched externally either manually or
-    by HopsworksLaunchOperator. By default the task will fail if the
-    validation result is not Success.
-
-    :param hopsworks_conn_id: HTTP connection identifier for Hopsworks
-    :type hopsworks_conn_id: str
-    :param project_id: Hopsworks Project ID this job is associated with. Either this or project_name.
-    :type project_id: int
-    :param project_name: Hopsworks Project name this job is associated with. Either this or project_id.
-    :type project_name: str
-    :param feature_store_name: Optional name of the Feature Store the feature group belongs to
-    :type feature_store_name: str
-    :param feature_group_name: Name of the Feature Group the validation has performed
-    :type feature_group_name: str
-    :param ignore_result: Control whether a failed validation should not fail the task, default is False (aka failed validation will fail the task)
-    :type ignore_result: boolean
-    """
-
-    FEATURE_STORE_SUFFIX = "_featurestore"
-    SUCCESS_STATUS = "Success"
-    
-    @apply_defaults
-    def __init__(
-            self,
-            hopsworks_conn_id = 'hopsworks_default',
-            project_id = None,
-            project_name = None,
-            feature_store_name = None,
-            feature_group_name = None,
-            ignore_result = False,
-            *args,
-            **kwargs):
-        super(HopsworksFeatureValidationResult, self).__init__(hopsworks_conn_id,
-                                                               project_id,
-                                                               project_name,
-                                                               *args,
-                                                               **kwargs)
-        if feature_store_name:
-            self.feature_store_name = feature_store_name
-        else:
-            self.feature_store_name = project_name.lower() + HopsworksFeatureValidationResult.FEATURE_STORE_SUFFIX
-        self.feature_group_name = feature_group_name
-        self.ignore_result = ignore_result
-
-    def execute(self, context):
-        hook = self._get_hook()
-        feature_store_id = hook.get_feature_store_id_by_name(self.feature_store_name)
-        feature_group_id = hook.get_feature_group_id_by_name(feature_store_id, self.feature_group_name)
-        validation_result = hook.get_feature_group_validation_result(feature_store_id, feature_group_id)
-        if not 'status' in validation_result:
-            raise AirflowException("Data validation result for {0}/{1} does NOT have status".format(self.feature_store_name, self.feature_group_name))
-        validation_status = validation_result['status']
-        if not self.ignore_result and HopsworksFeatureValidationResult.SUCCESS_STATUS != validation_status:
-            raise AirflowException("Feature validation has failed with status: {0} for {0}/{1}"
-                                   .format(validation_status, self.feature_store_name, self.feature_group_name))
             
 class HopsworksLaunchOperator(HopsworksAbstractOperator):
     """
