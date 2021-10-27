@@ -43,15 +43,15 @@ directory node['airflow']['data_volume']['root_dir'] do
   action :create
 end
 
-# /srv/hops/airflow/dags is a private directory - each project will have its own
-# directory owned by 'glassfish' with a secret key as a name. No read permissions for
-# group on this directory, means the 'glassfish' user cannot perform 'ls' on this directory
-# to find out other project's secret keys
-directory node['airflow']['data_volume']['dags_dir'] do
-  owner node["airflow"]["user"]
-  group node["airflow"]["group"]
-  mode "730"
-  recursive true
+# Directory to store DAGs. Inside this directory, for every project, we create 
+# a symbolic link from here to /hopsfs/Projects/<proj>/Airflow. The link's name is
+# the project name.
+# The directory needs group write privileges as 'glassfish' will create the symbolic link.
+# 'glassfish' user is a member of the airflow group
+directory "#{node['airflow']['data_volume']['dags_dir']}" do
+  owner node['airflow']['user']
+  group node['airflow']['group']
+  mode 0770
   action :create
 end
 
@@ -64,8 +64,9 @@ end
 bash 'Delete old airflow dags directory' do
   user 'root'
   code <<-EOH
-    set -e
-    rm -rf #{node["airflow"]["dags_link"]}
+  set -e
+  mv -f #{node["airflow"]["config"]["core"]["base_log_folder"]}/* #{node['airflow']['data_volume']['log_dir']}
+  rm -rf #{node["airflow"]["config"]["core"]["base_log_folder"]}
   EOH
   only_if { conda_helpers.is_upgrade }
   only_if { File.directory?(node["airflow"]["dags_link"])}
@@ -151,4 +152,19 @@ link node['airflow']['secrets_link'] do
   group node['airflow']['group']
   mode 0130
   to node['airflow']['data_volume']['secrets_dir']
+end
+
+
+hopsworksGroup = "glassfish"
+if node.attribute? "hopsworks"
+    if node["hopsworks"].attribute? "group"
+       hopsworksGroup = node['hopsworks']['group']
+    end
+end
+
+group node['airflow']['group'] do
+  action :modify
+  members [hopsworksGroup]    
+  append true
+  not_if { node['install']['external_users'].casecmp("true") == 0 }  
 end

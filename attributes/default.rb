@@ -57,7 +57,7 @@ default['airflow']['data_volume']['root_dir']       = "#{node['data']['dir']}/ai
 default['airflow']['data_volume']['log_dir']        = "#{node['airflow']['data_volume']['root_dir']}/logs"
 default['airflow']['data_volume']['secrets_dir']    = "#{node['airflow']['data_volume']['root_dir']}/secrets"
 # The DAGs are stored in hdfs, with symbolic links only added here
-default['airflow']['data_volume']['dags_dir']       = "#{node['airflow']['base_dir']}/dags" #/hopsfs/user/airflow"
+default['airflow']['data_volume']['dags_dir']       = "#{node['airflow']['base_dir']}/dags"
 
 # Folder where airflow will store Project user secrets
 default['airflow']['secrets_link']                    = "#{node['airflow']['base_dir']}/secrets"
