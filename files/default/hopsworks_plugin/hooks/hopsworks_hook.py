@@ -68,18 +68,6 @@ PROJECT_INFO_NAME = ("GET", BASE_API + "/project/getProjectInfo/{project_name}")
 # Get Project info from id
 PROJECT_INFO_ID = ("GET", BASE_API + "/project/{project_id}")
 
-#######################
-## Model service API ##
-#######################
-
-# Get Tf serving instances for a project
-PROJECT_SERVING_INSTANCES = ("GET", BASE_API + "/project/{project_id}/serving")
-# Create or update a serving instance
-CREATE_UPDATE_SERVING_INSTANCE = ("PUT", BASE_API + "/project/{project_id}/serving")
-# Start or stop a model serving instance
-START_STOP_SERVING_INSTANCE = ("POST", BASE_API + "/project/{project_id}/serving/{instance_id}?action={action}")
-
-
 class HopsworksHook(BaseHook, LoggingMixin):
     """
     Hook to interact with Hopsworks
@@ -151,45 +139,6 @@ class HopsworksHook(BaseHook, LoggingMixin):
         response = self._do_api_call(method, endpoint)
         item = response['items'][0]
         return item['state'], item['finalStatus']
-
-    def get_model_serving_instances(self):
-        """
-        Get all Tensorflow serving instances for a project
-        """
-        method, endpoint = PROJECT_SERVING_INSTANCES
-        endpoint = endpoint.format(project_id=self.project_id)
-        return self._do_api_call(method, endpoint)
-
-    def create_update_serving_instance(self, parameters):
-        """
-        Create or update a serving instance. If serving ID is provided
-        it will update that instance. If not it will create a new one
-        """
-        method, endpoint = CREATE_UPDATE_SERVING_INSTANCE
-        endpoint = endpoint.format(project_id=self.project_id)
-        self._do_api_call(method, endpoint, parameters)
-        
-    def start_model_serving_instance(self, instance_id):
-        """
-        Start a model serving instance identified by an ID
-        
-        :param instance_id: Numerical identifier of a model serving instance
-        :type instance_id: int
-        """
-        method, endpoint = START_STOP_SERVING_INSTANCE
-        endpoint = endpoint.format(project_id=self.project_id, instance_id=instance_id, action="START")
-        self._do_api_call(method, endpoint)
-        
-    def stop_model_serving_instance(self, instance_id):
-        """
-        Stop a model serving instance identified by an ID
-        
-        :param instance_id: Numerical identifier of a model serving instance
-        :type instance_id: int
-        """
-        method, endpoint = START_STOP_SERVING_INSTANCE
-        endpoint = endpoint.format(project_id=self.project_id, instance_id=instance_id, action="STOP")
-        self._do_api_call(method, endpoint)
 
     def _do_api_call(self, method, endpoint, data=None):
         url = "{schema}://{host}:{port}/{endpoint}".format(
