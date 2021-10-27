@@ -137,16 +137,3 @@ link node['airflow']['secrets_dir'] do
 end
 
 
-hopsworksGroup = "glassfish"
-if node.attribute? "hopsworks"
-    if node["hopsworks"].attribute? "group"
-       hopsworksGroup = node['hopsworks']['group']
-    end
-end
-
-group node['airflow']['group'] do
-  action :modify
-  members [hopsworksGroup]    
-  append true
-  not_if { node['install']['external_users'].casecmp("true") == 0 }  
-end
