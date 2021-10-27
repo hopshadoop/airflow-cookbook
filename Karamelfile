@@ -2,6 +2,7 @@ dependencies:
   - recipe: hops_airflow::install
     global:  
       - hops::install
+      - hopsworks::install      
   - recipe: hops_airflow::default
     global:  
       - ndb::mysqld
