@@ -40,14 +40,14 @@ if PY3:
     from urllib import parse as urlparse
 else:
     import urlparse
-    
+
 AIRFLOW_HOME_ENV = "AIRFLOW_HOME"
 JWT_FILE_SUFFIX = ".jwt"
 
 # Key for project ID for PROJECT_INFO_NAME response
-PROJECT_ID_KEY = 'projectId'
+PROJECT_ID_KEY = "projectId"
 # Key for project name for PROJECT_INFO_ID response
-PROJECT_NAME_KEY = 'projectName'
+PROJECT_NAME_KEY = "projectName"
 
 BASE_API = "hopsworks-api/api"
 
@@ -56,8 +56,16 @@ BASE_API = "hopsworks-api/api"
 ##############
 
 RUN_JOB = ("POST", BASE_API + "/project/{project_id}/jobs/{job_name}/executions")
+EXECUTION_STATE = (
+    "GET",
+    BASE_API + "/project/{project_id}/jobs/{job_name}/executions/{execution_id}",
+)
 # Get the latest execution
-JOB_STATE = ("GET", BASE_API + "/project/{project_id}/jobs/{job_name}/executions?sort_by=appId:desc&limit=1")
+LAST_EXECUTION_STATE = (
+    "GET",
+    BASE_API
+    + "/project/{project_id}/jobs/{job_name}/executions?sort_by=id:desc&limit=1",
+)
 
 ##################
 ## Projects API ##
@@ -67,6 +75,7 @@ JOB_STATE = ("GET", BASE_API + "/project/{project_id}/jobs/{job_name}/executions
 PROJECT_INFO_NAME = ("GET", BASE_API + "/project/getProjectInfo/{project_name}")
 # Get Project info from id
 PROJECT_INFO_ID = ("GET", BASE_API + "/project/{project_id}")
+
 
 class HopsworksHook(BaseHook, LoggingMixin):
     """
@@ -81,8 +90,15 @@ class HopsworksHook(BaseHook, LoggingMixin):
     :param owner: Hopsworks username
     :type owner: str
     """
-    def __init__(self, hopsworks_conn_id='hopsworks_default', project_id=None,
-                 project_name=None, owner=None, hw_api_key=None):
+
+    def __init__(
+        self,
+        hopsworks_conn_id="hopsworks_default",
+        project_id=None,
+        project_name=None,
+        owner=None,
+        hw_api_key=None,
+    ):
         self.hopsworks_conn_id = hopsworks_conn_id
         self.owner = owner
         self.hopsworks_conn = self.get_connection(hopsworks_conn_id)
@@ -90,62 +106,92 @@ class HopsworksHook(BaseHook, LoggingMixin):
         self.hw_api_key = hw_api_key
 
         if project_id is None:
-            self.project_id,_ = self._get_project_info(project_id, project_name)
+            self.project_id, _ = self._get_project_info(project_id, project_name)
         else:
             self.project_id = project_id
-            
+
         if project_name is None:
             _, self.project_name = self._get_project_info(project_id, project_name)
-
 
     def get_connection(self, connection_id):
         try:
             conn = super().get_connection(connection_id)
             if not conn.schema:
-                self.log.warn("Connection schema for {} was not set, setting https".format(connection_id))
+                self.log.warn(
+                    "Connection schema for {} was not set, setting https".format(
+                        connection_id
+                    )
+                )
                 conn.schema = "https"
             return conn
         except AirflowException:
-            self.log.warn("Didn't find connection with ID: {} - falling back to configuration".format(connection_id))
+            self.log.warn(
+                "Didn't find connection with ID: {} - falling back to configuration".format(
+                    connection_id
+                )
+            )
             hopsworks_host = configuration.conf.get("webserver", "hopsworks_host")
             hopsworks_port = configuration.conf.getint("webserver", "hopsworks_port")
-            return Connection(conn_id=connection_id,
-                              schema="https",
-                              host=self._parse_host(hopsworks_host),
-                              port=hopsworks_port)
-    
+            return Connection(
+                conn_id=connection_id,
+                schema="https",
+                host=self._parse_host(hopsworks_host),
+                port=hopsworks_port,
+            )
+
     def launch_job(self, job_name, args):
-        """
-        Function for launching a job to Hopsworks. The call does not wait for job
+        """Function for launching a job to Hopsworks. The call does not wait for job
         completion, use HopsworksSensor for this purpose.
-        
+
         :param job_name: Name of the job to be launched in Hopsworks
         :type job_name: str
         :type args: runtime arguments of this execution
+
+        :returns: Execution ID of the job just launched
+        :rtype: int
         """
         method, endpoint = RUN_JOB
         endpoint = endpoint.format(project_id=self.project_id, job_name=job_name)
         response = self._do_api_call(method, endpoint, args)
+        return response["id"]
 
-    def get_job_state(self, job_name):
+    def get_execution_state(self, job_name, execution_id):
         """
-        Function to get the state of a job
+        Function to get the state of an execution
+
+        :param job_name: Name of the job in Hopsworks
+        :type job_name: str
+        :param execution_id: The ID of the Hopsworks execution
+        :type job_name: int
+        """
+        method, endpoint = JOB_STATE
+        endpoint = endpoint.format(
+            project_id=self.project_id, job_name=job_name, execution_id=execution_id
+        )
+        response = self._do_api_call(method, endpoint)
+        item = response["items"]
+        return item["state"], item["finalStatus"]
+
+    def get_last_execution_state(self, job_name):
+        """
+        Function to get the state of the last execution
 
         :param job_name: Name of the job in Hopsworks
         :type job_name: str
         """
-        method, endpoint = JOB_STATE
+        method, endpoint = LAST_EXECUTION_STATE
         endpoint = endpoint.format(project_id=self.project_id, job_name=job_name)
         response = self._do_api_call(method, endpoint)
-        item = response['items'][0]
-        return item['state'], item['finalStatus']
+        item = response["items"][0]
+        return item["state"], item["finalStatus"]
 
     def _do_api_call(self, method, endpoint, data=None):
         url = "{schema}://{host}:{port}/{endpoint}".format(
-            schema = self.hopsworks_conn.schema,
-            host = self.hopsworks_conn.host,
-            port = self.hopsworks_conn.port,
-            endpoint = endpoint)
+            schema=self.hopsworks_conn.schema,
+            host=self.hopsworks_conn.host,
+            port=self.hopsworks_conn.port,
+            endpoint=endpoint,
+        )
         if "GET" == method:
             requests_method = requests.get
         elif "POST" == method:
@@ -176,16 +222,25 @@ class HopsworksHook(BaseHook, LoggingMixin):
                 raise AirflowException(ex)
             except requests_exceptions.RequestException as ex:
                 if attempts > 3:
-                    raise AirflowException("Error making HTTP request. Response: {0} - Status Code: {1}"
-                                           .format(ex.response.content, ex.response.status_code))
+                    raise AirflowException(
+                        "Error making HTTP request. Response: {0} - Status Code: {1}".format(
+                            ex.response.content, ex.response.status_code
+                        )
+                    )
                 self.log.warn("Error making HTTP request, retrying...")
-                self.log.warn("Code {0} - Reason {1}".format(ex.response.status_code, ex.response.content))
+                self.log.warn(
+                    "Code {0} - Reason {1}".format(
+                        ex.response.status_code, ex.response.content
+                    )
+                )
                 attempts += 1
                 sleep(1)
-        
+
     def _get_project_info(self, project_id, project_name):
         if project_id is None and project_name is None:
-            raise AirflowException("At least project_id or project_name should be specified")
+            raise AirflowException(
+                "At least project_id or project_name should be specified"
+            )
         if project_id is None:
             method, endpoint = PROJECT_INFO_NAME
             endpoint = endpoint.format(project_name=project_name)
@@ -195,16 +250,18 @@ class HopsworksHook(BaseHook, LoggingMixin):
 
         response = self._do_api_call(method, endpoint)
         if PROJECT_ID_KEY not in response:
-            raise AirflowException("Could not parse {0} from REST response"
-                                   .format(PROJECT_ID_KEY))
+            raise AirflowException(
+                "Could not parse {0} from REST response".format(PROJECT_ID_KEY)
+            )
         project_id_resp = response[PROJECT_ID_KEY]
 
         if PROJECT_NAME_KEY not in response:
-            raise AirflowException("Could not parse {0} from REST response"
-                                   .format(PROJECT_NAME_KEY))
+            raise AirflowException(
+                "Could not parse {0} from REST response".format(PROJECT_NAME_KEY)
+            )
         project_name_resp = response[PROJECT_NAME_KEY]
         return project_id_resp, project_name_resp
-            
+
     def _parse_host(self, host):
         """
         Host should be just the hostname or ip address
@@ -225,7 +282,9 @@ class HopsworksHook(BaseHook, LoggingMixin):
             return os.environ[AIRFLOW_HOME_ENV]
         airflow_home = configuration.conf.get("core", "airflow_home")
         if not airflow_home:
-            raise AirflowException("Airflow home is not set in configuration, nor in $AIRFLOW_HOME")
+            raise AirflowException(
+                "Airflow home is not set in configuration, nor in $AIRFLOW_HOME"
+            )
         return airflow_home
 
     def _generate_secret_dir(self):
@@ -235,7 +294,7 @@ class HopsworksHook(BaseHook, LoggingMixin):
         """
         airflow_home = self._get_airflow_home()
         # First try with owner
-        digest = hashlib.sha256(str(self.owner).encode('UTF-8')).hexdigest()
+        digest = hashlib.sha256(str(self.owner).encode("UTF-8")).hexdigest()
         secret_dir = os.path.join(airflow_home, "secrets", digest)
         if os.path.exists(secret_dir):
             return secret_dir
@@ -243,7 +302,7 @@ class HopsworksHook(BaseHook, LoggingMixin):
         # Then try with project_id for backward compatibility
         if not self.project_id:
             raise AirflowException("Hopsworks Project ID is not set")
-        digest = hashlib.sha256(str(self.project_id).encode('UTF-8')).hexdigest()
+        digest = hashlib.sha256(str(self.project_id).encode("UTF-8")).hexdigest()
         return os.path.join(airflow_home, "secrets", digest)
 
     def _parse_jwt_for_user(self):
@@ -255,38 +314,46 @@ class HopsworksHook(BaseHook, LoggingMixin):
         """
         if not self.owner:
             raise AirflowException("Owner of the DAG is not specified")
-        
+
         secret_dir = self._generate_secret_dir()
 
         # When hook is constructed and project name is not provided
         # we should get the first token available for this user.
         if self.project_name is None:
-            jwt_regex = os.path.join(secret_dir, '*__{0}.jwt'.format(self.owner))
+            jwt_regex = os.path.join(secret_dir, "*__{0}.jwt".format(self.owner))
             tokens_found = glob.glob(jwt_regex)
             if not tokens_found:
-                raise AirflowException("Could not find any token related to user {0}".format(self.owner))
+                raise AirflowException(
+                    "Could not find any token related to user {0}".format(self.owner)
+                )
             jwt_token_file = tokens_found[0]
         else:
-            filename = "{0}__{1}{2}".format(self.project_name, self.owner, JWT_FILE_SUFFIX)
+            filename = "{0}__{1}{2}".format(
+                self.project_name, self.owner, JWT_FILE_SUFFIX
+            )
             jwt_token_file = os.path.join(secret_dir, filename)
 
         if not os.path.isfile(jwt_token_file):
-            raise AirflowException('Could not read JWT file for user {}'.format(self.owner))
-        with open(jwt_token_file, 'r') as fd:
+            raise AirflowException(
+                "Could not read JWT file for user {}".format(self.owner)
+            )
+        with open(jwt_token_file, "r") as fd:
             return fd.read().strip()
+
 
 class JWTAuthorization(AuthBase):
     def __init__(self, token):
         self.token = token
 
     def __call__(self, request):
-        request.headers['Authorization'] = "Bearer {0}".format(self.token)
+        request.headers["Authorization"] = "Bearer {0}".format(self.token)
         return request
+
 
 class APIKeyAuthorization(AuthBase):
     def __init__(self, key):
         self.key = key
 
     def __call__(self, request):
-        request.headers['Authorization'] = "ApiKey {0}".format(self.key)
+        request.headers["Authorization"] = "ApiKey {0}".format(self.key)
         return request
