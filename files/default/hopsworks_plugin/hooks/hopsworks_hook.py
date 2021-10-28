@@ -64,7 +64,7 @@ EXECUTION_STATE = (
 LAST_EXECUTION_STATE = (
     "GET",
     BASE_API
-    + "/project/{project_id}/jobs/{job_name}/executions?sort_by=id:desc&limit=1",
+    + "/project/{project_id}/jobs/{job_name}/executions?sort_by=submissiontime:desc&limit=1",
 )
 
 ##################
@@ -164,12 +164,11 @@ class HopsworksHook(BaseHook, LoggingMixin):
         :param execution_id: The ID of the Hopsworks execution
         :type job_name: int
         """
-        method, endpoint = JOB_STATE
+        method, endpoint = EXECUTION_STATE
         endpoint = endpoint.format(
             project_id=self.project_id, job_name=job_name, execution_id=execution_id
         )
-        response = self._do_api_call(method, endpoint)
-        item = response["items"]
+        item = self._do_api_call(method, endpoint)
         return item["state"], item["finalStatus"]
 
     def get_last_execution_state(self, job_name):
