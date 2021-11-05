@@ -59,9 +59,6 @@ class HopsworksAbstractOperator(BaseOperator):
     template_fields = ['job_arguments', ]
 
     def _get_hook(self):
-        return HopsworksHook(self.hopsworks_conn_id, self.project_id, self.project_name, self.owner, self.hw_api_key)
-
-    def _get_hook(self):
         return HopsworksHook(
             self.hopsworks_conn_id,
             self.project_id,
