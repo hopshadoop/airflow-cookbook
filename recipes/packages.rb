@@ -89,8 +89,8 @@ bash "create_airflow_env" do
   umask "022"
   user node['conda']['user']
   group node['conda']['group']
-  environment ({'HOME' => "/home/#{node['conda']['user']}"})
-  cwd "/home/#{node['conda']['user']}"
+  environment ({'HOME' => ::Dir.home(node['conda']['user'])})
+  cwd ::Dir.home(node['conda']['user'])
   code <<-EOF
     #{node['conda']['base_dir']}/bin/conda create -q -y -n airflow python=#{node['airflow']['python']['version']}
   EOF
@@ -104,8 +104,8 @@ bash 'install_airflow' do
   group node['conda']['group']
   environment ({'SLUGIFY_USES_TEXT_UNIDECODE' => 'yes',
                 'AIRFLOW_HOME' => node['airflow']['base_dir'],
-                'HOME' => "/home/#{node['conda']['user']}"})
-  cwd "/home/#{node['conda']['user']}"
+                'HOME' => ::Dir.home(node['conda']['user'])})
+  cwd ::Dir.home(node['conda']['user'])
   code <<-EOF
       set -e
       #{node['conda']['base_dir']}/envs/airflow/bin/pip install --no-cache-dir Flask-OpenID==1.3.0
