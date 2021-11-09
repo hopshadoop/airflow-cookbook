@@ -15,7 +15,7 @@ bash 'create_airflow_db' do
   not_if "#{exec} -e 'show databases' | grep airflow"	
 end
 
-cookbook_file "/home/#{node['airflow']['user']}/create_db_idx_proc.sql" do
+cookbook_file "#{::Dir.home(node['airflow']['user'])}/create_db_idx_proc.sql" do
   source 'create_db_idx_proc.sql'
   owner node['airflow']['user']
   group node['airflow']['group']
@@ -28,7 +28,7 @@ bash 'import_create_idx_proc' do
   group "root"
   code <<-EOH
        set -e
-       #{exec} < /home/#{node['airflow']['user']}/create_db_idx_proc.sql
+       #{exec} < "#{::Dir.home(node['airflow']['user'])}/create_db_idx_proc.sql"
        EOH
-  only_if { ::File.exist?("/home/#{node['airflow']['user']}/create_db_idx_proc.sql") }
+  only_if { ::File.exist?("#{::Dir.home(node['airflow']['user'])}/create_db_idx_proc.sql") }
 end
