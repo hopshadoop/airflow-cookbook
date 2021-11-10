@@ -17,7 +17,9 @@ bash 'create_airflow_db' do
   not_if "#{exec} -e 'show databases' | grep airflow"	
 end
 
-cookbook_file "#{::Dir.home(node['airflow']['user'])}/create_db_idx_proc.sql" do
+airflow_user_home = conda_helpers.get_user_home(node['airflow']['user'])
+
+cookbook_file "#{airflow_user_home}/create_db_idx_proc.sql" do
   source 'create_db_idx_proc.sql'
   owner node['airflow']['user']
   group node['airflow']['group']
@@ -30,7 +32,7 @@ bash 'import_create_idx_proc' do
   group "root"
   code <<-EOH
        set -e
-       #{exec} < "#{::Dir.home(node['airflow']['user'])}/create_db_idx_proc.sql"
+       #{exec} < "#{airflow_user_home}/create_db_idx_proc.sql"
        EOH
-  only_if { ::File.exist?("#{::Dir.home(node['airflow']['user'])}/create_db_idx_proc.sql") }
+  only_if { ::File.exist?("#{airflow_user_home}/create_db_idx_proc.sql") }
 end

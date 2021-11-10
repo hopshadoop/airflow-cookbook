@@ -84,13 +84,15 @@ bash "remove_airflow_env" do
   only_if "test -d #{node['conda']['base_dir']}/envs/airflow", :user => node['conda']['user']  
 end
 
+conda_user_home = conda_helpers.get_user_home(node['conda']['user'])
+
 ## Create Aiflow anaconda environment.
 bash "create_airflow_env" do
   umask "022"
   user node['conda']['user']
   group node['conda']['group']
-  environment ({'HOME' => ::Dir.home(node['conda']['user'])})
-  cwd ::Dir.home(node['conda']['user'])
+  environment ({'HOME' => conda_user_home})
+  cwd conda_user_home
   code <<-EOF
     #{node['conda']['base_dir']}/bin/conda create -q -y -n airflow python=#{node['airflow']['python']['version']}
   EOF
@@ -104,8 +106,8 @@ bash 'install_airflow' do
   group node['conda']['group']
   environment ({'SLUGIFY_USES_TEXT_UNIDECODE' => 'yes',
                 'AIRFLOW_HOME' => node['airflow']['base_dir'],
-                'HOME' => ::Dir.home(node['conda']['user'])})
-  cwd ::Dir.home(node['conda']['user'])
+                'HOME' => conda_user_home})
+  cwd conda_user_home
   code <<-EOF
       set -e
       #{node['conda']['base_dir']}/envs/airflow/bin/pip install --no-cache-dir Flask-OpenID==1.3.0
