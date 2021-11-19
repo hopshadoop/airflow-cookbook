@@ -55,7 +55,7 @@ BASE_API = "hopsworks-api/api"
 ## Jobs API ##
 ##############
 
-RUN_JOB = ("POST", BASE_API + "/project/{project_id}/jobs/{job_name}/executions")
+RUN_JOB = ("POST", BASE_API + "/project/{project_id}/jobs/{job_name}/executions?action=start")
 EXECUTION_STATE = (
     "GET",
     BASE_API + "/project/{project_id}/jobs/{job_name}/executions/{execution_id}",
