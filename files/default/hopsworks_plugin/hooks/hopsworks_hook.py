@@ -340,14 +340,6 @@ class HopsworksHook(BaseHook, LoggingMixin):
             return fd.read().strip()
 
 
-class HopsworksFeatureValidationResult(HopsworksAbstractOperator):
-    pass
-
-
-class HopsworksModelServingInstance(HopsworksAbstractOperator):
-    pass
-
-
 class JWTAuthorization(AuthBase):
     def __init__(self, token):
         self.token = token
