@@ -176,3 +176,11 @@ class HopsworksLaunchOperator(HopsworksAbstractOperator):
             app_state.upper() in HopsworksLaunchOperator.SUCCESS_APP_STATE
             and am_status.upper() in HopsworksLaunchOperator.FAILED_AM_STATUS
         )
+
+
+class HopsworksFeatureValidationResult(HopsworksAbstractOperator):
+    pass
+
+
+class HopsworksModelServingInstance(HopsworksAbstractOperator):
+    pass
