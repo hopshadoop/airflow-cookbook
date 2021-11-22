@@ -17,11 +17,18 @@ Description=Airflow webserver daemon
 After=network.target <%= @deps %>
 
 [Service]
-EnvironmentFile=<%= @env_path %>
-User=<%= @user %>
-Group=<%= @group %>
-ExecStart=<%= @base_path %>/airflow_runner.sh webserver --pid <%= @run_path %>/airflow-webserver.pid
+ExecStart = /usr/bin/docker run --rm --name airfow-webserver \
+           -v <%= node['airflow']['config']['core']['airflow_home'] %>/airflow.cfg:/airflow/airflow.cfg \
+           -v <%= node['airflow']['data_volume']['dags_dir'] %>:/airflow/dags \
+           -v <%= node['airflow']['data_volume']['log_dir'] %>:/airflow/logs \
+           -v <%= node['airflow']['data_volume']['secrets_dir'] %>:/airflow/secrets \
+           --network=host \
+           docker.hops.works/airflow:<%= node['airflow']['version'] %> \
+           airflow webserver
+ExecStop = /usr/bin/docker stop airflow-webserver
+
 Restart=always
+RestartSec=5s
 
 [Install]
 WantedBy=multi-user.target

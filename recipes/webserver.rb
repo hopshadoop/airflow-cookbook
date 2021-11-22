@@ -17,10 +17,7 @@ if exists_local("ndb", "mysqld")
   deps = "mysqld.service"
 end  
 
-if (node["airflow"]["init_system"] == "upstart") 
-  service_target = "/etc/init/airflow-webserver.conf"
-  service_template = "init_system/upstart/airflow-webserver.conf.erb"
-elsif (node["airflow"]["init_system"] == "systemd" && node["platform"] == "ubuntu" )
+if node["platform"] == "ubuntu"
   service_target = "/lib/systemd/system/airflow-webserver.service"
   service_template = "init_system/systemd/airflow-webserver.service.erb"
 else

@@ -78,13 +78,6 @@ bash 'Delete old airflow dags directory' do
   not_if { File.symlink?(node["airflow"]["config"]["core"]["dags_folder"])}
 end
 
-link node["airflow"]["config"]["core"]["dags_folder"] do
-  owner node["airflow"]["user"]
-  group node["airflow"]["group"]
-  mode "730"
-  to node['airflow']['data_volume']['dags_dir']
-end
-
 directory node['airflow']['data_volume']['log_dir'] do
   owner node['airflow']['user']
   group node['airflow']['group']
@@ -101,20 +94,6 @@ bash 'Move airflow logs to data volume' do
   only_if { conda_helpers.is_upgrade }
   only_if { File.directory?(node["airflow"]["config"]["core"]["base_log_folder"])}
   not_if { File.symlink?(node["airflow"]["config"]["core"]["base_log_folder"])}
-end
-
-link node['airflow']["config"]["core"]["base_log_folder"] do
-  owner node['airflow']['user']
-  group node['airflow']['group']
-  mode '0750'
-  to node['airflow']['data_volume']['log_dir']
-end
-
-directory node['airflow']['config']['core']['plugins_folder'] do
-  owner node['airflow']['user']
-  group node['airflow']['group']
-  mode node['airflow']['directories_mode']
-  action :create
 end
 
 directory node['airflow']['run_path'] do

@@ -47,8 +47,6 @@ default['airflow']["directories_mode"] = "0770"
 default['airflow']["config_file_mode"] = "0600"
 default['airflow']["bin_path"] = "#{node['conda']['base_dir']}/envs/airflow/bin"
 default['airflow']["run_path"] = node['airflow']["base_dir"] + "/run"
-default['airflow']["is_upstart"] = node["platform"] == "ubuntu" && node["platform_version"].to_f < 15.04
-default['airflow']["init_system"] = node['airflow']["is_upstart"] ? "upstart" : "systemd"
 default['airflow']["env_path"] = node['airflow']["base_dir"] + "/airflow.env"
 default['airflow']["scheduler_runs"] = 5
 # Number of seconds to execute before exiting
@@ -69,15 +67,15 @@ default['airflow']['data_volume']['dags_dir']       = "#{node['airflow']['data_v
 default['airflow']['data_volume']['log_dir']        = "#{node['airflow']['data_volume']['root_dir']}/logs"
 default['airflow']['data_volume']['secrets_dir']    = "#{node['airflow']['data_volume']['root_dir']}/secrets"
 
-#  The home folder for airflow, default is ~/airflow
-default['airflow']["config"]["core"]["airflow_home"] = node['airflow']["base_dir"]
-# The folder where your airflow pipelines live, most likely a subfolder in a code repository
-default['airflow']["config"]["core"]["dags_folder"] = "#{node['airflow']["config"]["core"]["airflow_home"]}/dags"
-# The folder where airflow should store its log files. This location
-default['airflow']["config"]["core"]["base_log_folder"]  = node['airflow']["base_dir"] + "/logs"
-
 # Folder where airflow will store Project user secrets
 default['airflow']['secrets_dir']                    = "#{node['airflow']['base_dir']}/secrets"
+
+#  The home folder for airflow, default is ~/airflow
+default['airflow']["config"]["core"]["airflow_home"] = "/airflow"
+# The folder where your airflow pipelines live, most likely a subfolder in a code repository
+default['airflow']["config"]["core"]["dags_folder"] = "/airflow/dags"
+# The folder where airflow should store its log files. This location
+default['airflow']["config"]["core"]["base_log_folder"]  = "/airflow/logs"
 
 # must supply a remote location URL (starting with either 's3://...' or
 # 'gs://...') and an Airflow connection id that provides access to the storage
@@ -92,7 +90,7 @@ default['airflow']['secrets_dir']                    = "#{node['airflow']['base_
 default['airflow']["config"]["core"]["donot_pickle"]  = false
  
 # Where your Airflow plugins are stored
-default['airflow']["config"]["core"]["plugins_folder"] = "#{node['airflow']["config"]["core"]["airflow_home"]}/plugins"
+default['airflow']["config"]["core"]["plugins_folder"] = "/airflow/plugins"
 
 #default['airflow']["config"]["core"]["fernet_key"] = cryptography_not_found_storing_passwords_in_plain_text
 default['airflow']["config"]["core"]["fernet_key"] = "G3jB5--jCQpRYp7hwUtpfQ_S8zLRbRMwX8tr3dehnNU=" # Be sure to change this for production
