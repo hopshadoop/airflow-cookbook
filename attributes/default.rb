@@ -18,9 +18,8 @@ include_attribute "hops"
 
 
 # User configuration
-default['airflow']["airflow_package"] = 'apache-airflow' 
 default['airflow']["version"]         = "1.10.10"
-default['airflow']['url']             = "#{node['download_url']}/apache/airflow/#{node['airflow']['version']}/constraints/constraints-3.7.txt"
+default['airflow']['url']             = "#{node['download_url']}/airflow#{node['airflow']['version']}/airflow.tgz"
 default['airflow']['user']            = node['install']['user'].empty? ? 'airflow' : node['install']['user']
 default['airflow']['user_id']         = '1512'
 default['airflow']['group']           = node['install']['user'].empty? ? 'airflow' : node['install']['user']
@@ -28,9 +27,6 @@ default['airflow']['group_id']        = '1508'
 
 default['airflow']['mysql_user']      = "airflow_db"
 default['airflow']['mysql_password']  = "airflow_db"
-
-## Remove devel_hadoop which brings snakebite[kerberos] which does not work on Python 3
-default['airflow']["operators"]       = "hive,mysql,kubernetes,password,hdfs,ssh,jdbc,mysql,crypto"
 
 #default['airflow']["user_uid"] = 9999
 #default['airflow']["group_gid"] = 9999
@@ -51,12 +47,6 @@ default['airflow']["env_path"] = node['airflow']["base_dir"] + "/airflow.env"
 default['airflow']["scheduler_runs"] = 5
 # Number of seconds to execute before exiting
 default['airflow']["scheduler_duration"] = 21600
-
-
-# Python config
-default['airflow']["python_runtime"] = "3"
-default['airflow']["python_version"] = "3.7"
-default['airflow']["pip_version"] = true
 
 # Configurations stated below are required for this cookbook and will be written to airflow.cfg, you can add more config by using structure like:
 # default['airflow']["config"]["CONFIG_SECTION"]["CONFIG_ENTRY"]

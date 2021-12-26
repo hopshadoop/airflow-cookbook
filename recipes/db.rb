@@ -19,12 +19,11 @@ end
 # Run airflow upgradedb - not airflow initdb. See:
 # https://medium.com/datareply/airflow-lesser-known-tips-tricks-and-best-practises-cf4d4a90f8f
 #
+docker_registry = "#{consul_helper.get_service_fqdn("registry")}:#{node['hops']['docker']['registry']['port']}"
 bash 'init_airflow_db' do
-  user node['airflow']['user']
+  user 'root'
   code <<-EOF
-      set -e
-      export AIRFLOW_HOME=#{node['airflow']['base_dir']}
-      #{node['airflow']['bin_path']}/airflow upgradedb
+      docker run #{docker_registry}/airflow:#{node['airflow']['version']} airflow upgradedb
     EOF
 end
 
