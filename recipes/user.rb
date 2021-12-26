@@ -32,20 +32,6 @@ user node['airflow']['user'] do
   not_if { node['install']['external_users'].casecmp("true") == 0 }
 end
 
-group node['hops']['group'] do
-  gid node['hops']['group_id']
-  action :create
-  not_if "getent group #{node['hops']['group']}"
-  not_if { node['install']['external_users'].casecmp("true") == 0 }
-end
-
-group node['hops']['group'] do
-  action :modify
-  members ["#{node['airflow']['user']}"]
-  append true
-  not_if { node['install']['external_users'].casecmp("true") == 0 }
-end
-
 hopsworksUser = "glassfish"
 if node.attribute? "hopsworks" and node["hopsworks"].attribute? "user"
    hopsworksUser = node['hopsworks']['user']
