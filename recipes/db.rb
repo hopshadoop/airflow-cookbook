@@ -23,7 +23,10 @@ docker_registry = "#{consul_helper.get_service_fqdn("registry")}:#{node['hops'][
 bash 'init_airflow_db' do
   user 'root'
   code <<-EOF
-      docker run #{docker_registry}/airflow:#{node['airflow']['version']} airflow upgradedb
+    docker run -v #{node['airflow']['base_dir']}/airflow.cfg:/airflow/airflow.cfg \
+      --network=host \
+      #{docker_registry}/airflow:#{node['airflow']['version']} \
+      airflow upgradedb
     EOF
 end
 

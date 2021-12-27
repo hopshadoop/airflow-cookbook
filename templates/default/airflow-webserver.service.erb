@@ -18,12 +18,12 @@ After=network.target <%= @deps %>
 
 [Service]
 ExecStart = /usr/bin/docker run --rm --name airfow-webserver \
-           -v <%= node['airflow']['config']['core']['airflow_home'] %>/airflow.cfg:/airflow/airflow.cfg \
+           -v <%= node['airflow']['base_dir'] %>/airflow.cfg:/airflow/airflow.cfg \
            -v <%= node['airflow']['data_volume']['dags_dir'] %>:/airflow/dags \
            -v <%= node['airflow']['data_volume']['log_dir'] %>:/airflow/logs \
            -v <%= node['airflow']['data_volume']['secrets_dir'] %>:/airflow/secrets \
            --network=host \
-           <%= consul_helper.get_service_fqdn("registry") %>:<%= node['hops']['docker']['registry']['port']%>/airflow:<%= node['airflow']['version'] %> \
+           <%= @image_name %> \
            airflow webserver
 ExecStop = /usr/bin/docker stop airflow-webserver
 

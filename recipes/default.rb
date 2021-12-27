@@ -16,7 +16,7 @@
 include_recipe "hops_airflow::user"
 include_recipe "hops_airflow::directories"
 include_recipe "hops_airflow::image"
-include_recipe "hops_airflow::db"
 include_recipe "hops_airflow::config"
+include_recipe "hops_airflow::db"
 include_recipe "hops_airflow::webserver"
 include_recipe "hops_airflow::scheduler"

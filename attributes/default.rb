@@ -34,7 +34,6 @@ default['airflow']["user_home_directory"] = "/home/#{node['airflow']['user']}"
 default['airflow']["shell"] = "/bin/bash"
 
 default['airflow']["dir"]                 = node['install']['dir'].empty? ? "/srv/hops" : node['install']['dir']
-default['airflow']["home"]                = node['airflow']['dir'] + "/airflow-" +  node['airflow']['version']
 default['airflow']["base_dir"]            = node['airflow']['dir'] + "/airflow" 
 
 
@@ -42,8 +41,6 @@ default['airflow']["base_dir"]            = node['airflow']['dir'] + "/airflow"
 default['airflow']["directories_mode"] = "0770"
 default['airflow']["config_file_mode"] = "0600"
 default['airflow']["bin_path"] = "#{node['conda']['base_dir']}/envs/airflow/bin"
-default['airflow']["run_path"] = node['airflow']["base_dir"] + "/run"
-default['airflow']["env_path"] = node['airflow']["base_dir"] + "/airflow.env"
 default['airflow']["scheduler_runs"] = 5
 # Number of seconds to execute before exiting
 default['airflow']["scheduler_duration"] = 21600
@@ -58,7 +55,9 @@ default['airflow']['data_volume']['log_dir']        = "#{node['airflow']['data_v
 default['airflow']['data_volume']['secrets_dir']    = "#{node['airflow']['data_volume']['root_dir']}/secrets"
 
 # Folder where airflow will store Project user secrets
-default['airflow']['secrets_dir']                    = "#{node['airflow']['base_dir']}/secrets"
+default['airflow']['secrets_link']                    = "#{node['airflow']['base_dir']}/secrets"
+default['airflow']['dags_link']                       = "#{node['airflow']['base_dir']}/dags"
+default['airflow']['log_link']                        = "#{node['airflow']['base_dir']}/logs"
 
 #  The home folder for airflow, default is ~/airflow
 default['airflow']["config"]["core"]["airflow_home"] = "/airflow"
