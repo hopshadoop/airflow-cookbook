@@ -56,7 +56,9 @@ class HopsworksAbstractOperator(BaseOperator):
         else:
             self.hw_api_key = None
 
-    template_fields = ['job_arguments', ]
+    template_fields = [
+        "job_arguments",
+    ]
 
     def _get_hook(self):
         return HopsworksHook(
@@ -123,7 +125,11 @@ class HopsworksLaunchOperator(HopsworksAbstractOperator):
         **kwargs
     ):
         super(HopsworksLaunchOperator, self).__init__(
-            hopsworks_conn_id, project_id, project_name, *args, **kwargs
+            hopsworks_conn_id=hopsworks_conn_id,
+            project_id=project_id,
+            project_name=project_name,
+            *args,
+            **kwargs
         )
         self.job_name = job_name
         self.wait_for_completion = wait_for_completion
