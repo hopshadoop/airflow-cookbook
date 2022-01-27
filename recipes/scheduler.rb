@@ -21,6 +21,8 @@ end
 service_target = "/lib/systemd/system/airflow-scheduler.service"
 service_template = "init_system/systemd/airflow-scheduler.service.erb"
 
+image_name = "#{consul_helper.get_service_fqdn("registry")}:#{node['hops']['docker']['registry']['port']}/airflow:#{node['airflow']['version']}"
+
 template service_target do
   source service_template
   owner "root"
@@ -28,12 +30,7 @@ template service_target do
   mode "0644"
   variables({
     :deps => deps,
-    :user => node["airflow"]["user"], 
-    :group => node["airflow"]["group"],
-    :run_path => node["airflow"]["run_path"],
-    :bin_path => node["airflow"]["bin_path"],
-    :env_path => node["airflow"]["env_path"],
-    :base_path => node["airflow"]["base_dir"],
+    :image_name => image_name,
   })
 end
 

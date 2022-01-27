@@ -13,15 +13,22 @@
 # limitations under the License.
 
 [Unit]
-Description=Airflow worker daemon
-After=network.target
+Description=Airflow webserver daemon
+After=network.target <%= @deps %>
 
 [Service]
-EnvironmentFile=<%= @env_path %>
-User=<%= @user %>
-Group=<%= @group %>
-ExecStart=<%= @base_path %>/airflow_runner.sh worker --pid <%= @run_path %>/airflow-worker.pid
+ExecStart = /usr/bin/docker run --rm --name airflow-webserver \
+           -v <%= node['airflow']['base_dir'] %>/airflow.cfg:/airflow/airflow.cfg \
+           -v <%= node['airflow']['data_volume']['dags_dir'] %>:/airflow/dags \
+           -v <%= node['airflow']['data_volume']['log_dir'] %>:/airflow/logs \
+           -v <%= node['airflow']['data_volume']['secrets_dir'] %>:/airflow/secrets \
+           --network=host \
+           <%= @image_name %> \
+           airflow webserver
+ExecStop = /usr/bin/docker stop airflow-webserver
+
 Restart=always
+RestartSec=5s
 
 [Install]
 WantedBy=multi-user.target

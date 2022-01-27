@@ -14,7 +14,6 @@
 # limitations under the License.
 
 include_recipe "hops_airflow::db"
-include_recipe "hops_airflow::packages"
 
 hopsworksUser = "glassfish"
 hopsworksGroup = "glassfish"
@@ -69,7 +68,6 @@ end
 
 
 include_recipe "hops_airflow::config"
-include_recipe "hops_airflow::services"
 
 directory node['airflow']['base_dir'] + "/plugins"  do
   owner node['airflow']['user']

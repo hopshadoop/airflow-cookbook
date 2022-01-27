@@ -22,7 +22,7 @@ end
 node.override['airflow']["config"]["webserver"]["hopsworks_host"] = consul_helper.get_service_fqdn("hopsworks.glassfish")
 node.override['airflow']["config"]["webserver"]["hopsworks_port"] = hopsworks_port
 
-template "#{node["airflow"]["config"]["core"]["airflow_home"]}/airflow.cfg" do
+template "#{node["airflow"]["base_dir"]}/airflow.cfg" do
   source "airflow.cfg.erb"
   owner node["airflow"]["user"]
   group node["airflow"]["group"]

@@ -21,7 +21,7 @@ directory node["airflow"]["dir"]  do
   not_if { File.directory?("#{node["airflow"]["dir"]}") }
 end
 
-directory node["airflow"]["config"]["core"]["airflow_home"] do
+directory node["airflow"]["base_dir"] do
   owner node["airflow"]["user"]
   group node["airflow"]["group"]
   mode node["airflow"]["directories_mode"]
@@ -70,29 +70,15 @@ bash 'Move airflow logs to data volume' do
   rm -rf #{node["airflow"]["config"]["core"]["base_log_folder"]}
   EOH
   only_if { conda_helpers.is_upgrade }
-  only_if { File.directory?(node["airflow"]["config"]["core"]["base_log_folder"])}
-  not_if { File.symlink?(node["airflow"]["config"]["core"]["base_log_folder"])}
+  only_if { File.directory?(node["airflow"]["log_link"])}
+  not_if { File.symlink?(node["airflow"]["log_link"])}
 end
 
-link node['airflow']["config"]["core"]["base_log_folder"] do
+link node['airflow']['log_link'] do
   owner node['airflow']['user']
   group node['airflow']['group']
-  mode '0750'
+  mode 0130
   to node['airflow']['data_volume']['log_dir']
-end
-
-directory node['airflow']['config']['core']['plugins_folder'] do
-  owner node['airflow']['user']
-  group node['airflow']['group']
-  mode node['airflow']['directories_mode']
-  action :create
-end
-
-directory node['airflow']['run_path'] do
-  owner node['airflow']['user']
-  group node['airflow']['group']
-  mode node['airflow']['directories_mode']
-  action :create
 end
 
 # Directory where Hopsworks will store JWT for projects
@@ -110,30 +96,18 @@ bash 'Move airflow secrets to data volume' do
   user 'root'
   code <<-EOH
     set -e
-    mv -f #{node['airflow']['secrets_dir']}/* #{node['airflow']['data_volume']['secrets_dir']}
+    mv -f #{node['airflow']['secrets_link']}/* #{node['airflow']['data_volume']['secrets_dir']}
+    rm -rf #{node['airflow']['secrets_link']}
   EOH
   only_if { conda_helpers.is_upgrade }
-  only_if { File.directory?(node['airflow']['secrets_dir'])}
-  not_if { File.symlink?(node['airflow']['secrets_dir'])}
-  not_if { Dir.empty?(node['airflow']['secrets_dir']) }
+  only_if { File.directory?(node['airflow']['secrets_link'])}
+  not_if { File.symlink?(node['airflow']['secrets_link'])}
+  not_if { Dir.empty?(node['airflow']['secrets_link']) }
 end
 
-bash 'Delete airflow secrets' do
-  user 'root'
-  code <<-EOH
-    set -e
-    rm -rf #{node['airflow']['secrets_dir']}
-  EOH
-  only_if { conda_helpers.is_upgrade }
-  only_if { File.directory?(node['airflow']['secrets_dir'])}
-  not_if { File.symlink?(node['airflow']['secrets_dir'])}
-end
-
-link node['airflow']['secrets_dir'] do
+link node['airflow']['secrets_link'] do
   owner node['airflow']['user']
   group node['airflow']['group']
   mode 0130
   to node['airflow']['data_volume']['secrets_dir']
 end
-
-
