@@ -13,83 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-include_recipe "hops_airflow::db"
-include_recipe "hops_airflow::packages"
-
-hopsworksUser = "glassfish"
-if node.attribute? "hopsworks"
-    if node["hopsworks"].attribute? "user"
-       hopsworksUser = node['hopsworks']['user']
-    end
-end
-
-group node['airflow']['group'] do
-  action :modify
-  members [hopsworksUser]  
-  append true
-end
-
+include_recipe "hops_airflow::user"
+include_recipe "hops_airflow::directories"
+include_recipe "hops_airflow::image"
 include_recipe "hops_airflow::config"
-include_recipe "hops_airflow::services"
-
-directory node['airflow']['base_dir'] + "/plugins"  do
-  owner node['airflow']['user']
-  group node['airflow']['group']
-  mode "770"
-  action :create
-end
-
-template "airflow_services_env" do
-  source "init_system/airflow-env.erb"
-  path node["airflow"]["env_path"]
-  owner node['airflow']['user']
-  group "root"
-  mode "0644"
-  variables({
-    :is_upstart => node["airflow"]["is_upstart"],
-    :config => node["airflow"]["config"]
-  })
-end
-
-#
-# Run airflow upgradedb - not airflow initdb. See:
-# https://medium.com/datareply/airflow-lesser-known-tips-tricks-and-best-practises-cf4d4a90f8f
-#
-bash 'init_airflow_db' do
-  user node['airflow']['user']
-  code <<-EOF
-      set -e
-      export AIRFLOW_HOME=#{node['airflow']['base_dir']}
-      #{node['airflow']['bin_path']}/airflow upgradedb
-    EOF
-end
-
-bash 'create_owners_idx' do
-  user "root"
-  group "root"
-  code <<-EOH
-       set -e
-       #{node['ndb']['scripts_dir']}/mysql-client.sh -e \"call airflow.create_idx('airflow', 'dag', 'owners', 'owners_idx')\"
-       EOH
-end
-
+include_recipe "hops_airflow::db"
 include_recipe "hops_airflow::webserver"
 include_recipe "hops_airflow::scheduler"
-
-template node['airflow']['base_dir'] + "/create-default-user.sh" do
-  source "create-default-user.sh.erb"
-  owner node['airflow']['user']
-  group node['airflow']['group']
-  mode "0774"
-end
-
-examples_dir = "#{node['conda']['base_dir']}/envs/airflow/lib/python#{node['airflow']['python_version']}/site-packages/airflow/example_dags"
-if not node['airflow']['config']['core']['load_examples']
-  bash 'remove_examples' do
-    user "root"
-    code <<-EOF
-      rm -rf "#{examples_dir}/*"
-    EOF
-    only_if "test -d #{examples_dir}", :user => "root"
-  end
-end  

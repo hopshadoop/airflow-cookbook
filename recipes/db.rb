@@ -15,22 +15,35 @@ bash 'create_airflow_db' do
   not_if "#{exec} -e 'show databases' | grep airflow"	
 end
 
-airflow_user_home = conda_helpers.get_user_home(node['airflow']['user'])
+#
+# Run airflow upgradedb - not airflow initdb. See:
+# https://medium.com/datareply/airflow-lesser-known-tips-tricks-and-best-practises-cf4d4a90f8f
+#
+docker_registry = "#{consul_helper.get_service_fqdn("registry")}:#{node['hops']['docker']['registry']['port']}"
+bash 'init_airflow_db' do
+  user 'root'
+  code <<-EOF
+    docker run -v #{node['airflow']['base_dir']}/airflow.cfg:/airflow/airflow.cfg \
+      --network=host \
+      #{docker_registry}/airflow:#{node['airflow']['version']} \
+      airflow upgradedb
+    EOF
+end
 
+airflow_user_home = conda_helpers.get_user_home(node['airflow']['user'])
 cookbook_file "#{airflow_user_home}/create_db_idx_proc.sql" do
   source 'create_db_idx_proc.sql'
   owner node['airflow']['user']
   group node['airflow']['group']
   mode 0500
-  notifies :run, 'bash[import_create_idx_proc]', :immediately
 end
 
-bash 'import_create_idx_proc' do
+bash 'create_owners_idx' do
   user "root"
   group "root"
   code <<-EOH
        set -e
        #{exec} < "#{airflow_user_home}/create_db_idx_proc.sql"
-       EOH
-  only_if { ::File.exist?("#{airflow_user_home}/create_db_idx_proc.sql") }
+       #{exec} -e \"call airflow.create_idx('airflow', 'dag', 'owners', 'owners_idx')\"
+  EOH
 end
