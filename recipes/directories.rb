@@ -65,13 +65,20 @@ end
 bash 'Move airflow logs to data volume' do
   user 'root'
   code <<-EOH
-  set -e
-  mv -f #{node["airflow"]["config"]["core"]["base_log_folder"]}/* #{node['airflow']['data_volume']['log_dir']}
-  rm -rf #{node["airflow"]["config"]["core"]["base_log_folder"]}
+    set -e
+    mv -f #{node["airflow"]["log_link"]}/* #{node['airflow']['data_volume']['log_dir']}
   EOH
   only_if { conda_helpers.is_upgrade }
-  only_if { File.directory?(node["airflow"]["log_link"])}
-  not_if { File.symlink?(node["airflow"]["log_link"])}
+  only_if { File.directory?(node["airflow"]["log_link"]) }
+  not_if { File.symlink?(node["airflow"]["log_link"]) }
+  not_if { Dir.empty?(node['airflow']['log_link']) }
+end
+
+directory node['airflow']['log_link'] do
+  action :delete
+  only_if { conda_helpers.is_upgrade }
+  only_if { File.directory?(node['airflow']['log_link']) }
+  not_if { File.symlink?(node['airflow']['log_link']) }
 end
 
 link node['airflow']['log_link'] do
@@ -97,12 +104,18 @@ bash 'Move airflow secrets to data volume' do
   code <<-EOH
     set -e
     mv -f #{node['airflow']['secrets_link']}/* #{node['airflow']['data_volume']['secrets_dir']}
-    rm -rf #{node['airflow']['secrets_link']}
   EOH
   only_if { conda_helpers.is_upgrade }
   only_if { File.directory?(node['airflow']['secrets_link'])}
   not_if { File.symlink?(node['airflow']['secrets_link'])}
   not_if { Dir.empty?(node['airflow']['secrets_link']) }
+end
+
+directory node['airflow']['secrets_link'] do
+  action :delete
+  only_if { conda_helpers.is_upgrade }
+  only_if { File.directory?(node['airflow']['secrets_link']) }
+  not_if { File.symlink?(node['airflow']['secrets_link']) }
 end
 
 link node['airflow']['secrets_link'] do
