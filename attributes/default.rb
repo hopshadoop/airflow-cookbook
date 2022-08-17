@@ -45,11 +45,21 @@ default['airflow']["scheduler_runs"] = 5
 # Number of seconds to execute before exiting
 default['airflow']["scheduler_duration"] = 21600
 
+
+# Python config
+default['airflow']["python_runtime"] = "3"
+default['airflow']["python_version"] = node['install']['python']['version']
+default['airflow']["pip_version"] = true
+
 # Configurations stated below are required for this cookbook and will be written to airflow.cfg, you can add more config by using structure like:
 # default['airflow']["config"]["CONFIG_SECTION"]["CONFIG_ENTRY"]
 
 # Data volume directories
 default['airflow']['data_volume']['root_dir']       = "#{node['data']['dir']}/airflow"
+<<<<<<< HEAD
+=======
+default['airflow']['data_volume']['dags_dir']       = "/hopsfs/user/airflow"
+>>>>>>> dce725a (merge)
 default['airflow']['data_volume']['log_dir']        = "#{node['airflow']['data_volume']['root_dir']}/logs"
 default['airflow']['data_volume']['secrets_dir']    = "#{node['airflow']['data_volume']['root_dir']}/secrets"
 # The DAGs are stored in hdfs, with symbolic links only added here

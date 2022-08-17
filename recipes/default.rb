@@ -26,6 +26,13 @@ if node.attribute? "hopsworks"
     end
 end
 
+group node['airflow']['group'] do
+  action :modify
+  members [hopsworksGroup]    
+  append true
+  not_if { node['install']['external_users'].casecmp("true") == 0 }  
+end
+
 # Directory where Hopsworks will store JWT for projects
 # Directory structure will be secrets/SECRET_PROJECT_ID/project_user.jwt
 # secrets dir is not readable so someone must only guess the SECRET_PROJECT_ID
@@ -113,6 +120,14 @@ end
 #        #{node['ndb']['scripts_dir']}/mysql-client.sh -e \"call airflow.create_idx('airflow', 'dag', 'owners', 'owners_idx')\"
 #        EOH
 # end
+bash 'create_owners_idx' do
+  user "root"
+  group "root"
+  code <<-EOH
+       set -e
+       #{node['ndb']['scripts_dir']}/mysql-client.sh -e \"call airflow.create_idx('airflow', 'dag', 'owners', 'owners_idx')\"
+       EOH
+end
 
 include_recipe "hops_airflow::webserver"
 include_recipe "hops_airflow::scheduler"
@@ -124,7 +139,7 @@ template node['airflow']['base_dir'] + "/create-default-user.sh" do
   mode "0774"
 end
 
-examples_dir = "#{node['conda']['base_dir']}/envs/airflow/lib/python#{node['airflow']['python']['version']}/site-packages/airflow/example_dags"
+examples_dir = "#{node['conda']['base_dir']}/envs/airflow/lib/python#{node['airflow']['python_version']}/site-packages/airflow/example_dags"
 if not node['airflow']['config']['core']['load_examples']
   bash 'remove_examples' do
     user "root"
@@ -149,3 +164,14 @@ hops_hdfs_directory "/user/airflow/dags" do
   mode "1370"
 end
 
+link node["airflow"]["config"]["core"]["dags_folder"] do
+  owner node["airflow"]["user"]
+  group node["airflow"]["group"]
+  mode "730"
+  to node['airflow']['data_volume']['dags_dir']
+end
+
+# Force reload of glassfish, so that secrets work
+kagent_config "glassfish-domain1" do
+  action :systemd_reload
+end
