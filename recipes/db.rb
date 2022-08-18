@@ -17,21 +17,6 @@ bash 'create_airflow_db' do
   not_if "#{exec} -e 'show databases' | grep airflow"	
 end
 
-#
-# Run airflow upgradedb - not airflow initdb. See:
-# https://medium.com/datareply/airflow-lesser-known-tips-tricks-and-best-practises-cf4d4a90f8f
-#
-docker_registry = "#{consul_helper.get_service_fqdn("registry")}:#{node['hops']['docker']['registry']['port']}"
-bash 'init_airflow_db' do
-  user 'root'
-  code <<-EOF
-    docker run -v #{node['airflow']['base_dir']}/airflow.cfg:/airflow/airflow.cfg \
-      --network=host \
-      #{docker_registry}/airflow:#{node['airflow']['version']} \
-      airflow upgradedb
-    EOF
-end
-
 airflow_user_home = conda_helpers.get_user_home(node['airflow']['user'])
 cookbook_file "#{airflow_user_home}/create_db_idx_proc.sql" do
   source 'create_db_idx_proc.sql'
@@ -49,3 +34,22 @@ bash 'create_owners_idx' do
        #{exec} -e \"call airflow.create_idx('airflow', 'dag', 'owners', 'owners_idx')\"
   EOH
 end
+
+
+# NOTE: the above SQL code performs all the operations of 'airflow upgradedb'.
+# 'airflow upgradedb' fails because it creates a column of length 5000 chars with utf8, and exceeds RonDB's max row size.
+#
+# Run airflow upgradedb - not airflow initdb. See:
+# https://medium.com/datareply/airflow-lesser-known-tips-tricks-and-best-practises-cf4d4a90f8f
+#
+#docker_registry = "#{consul_helper.get_service_fqdn("registry")}:#{node['hops']['docker']['registry']['port']}"
+#bash 'init_airflow_db' do
+#  user 'root'
+#  code <<-EOF
+#    docker run -v #{node['airflow']['base_dir']}/airflow.cfg:/airflow/airflow.cfg \
+#      --network=host \
+#      #{docker_registry}/airflow:#{node['airflow']['version']} \
+#      airflow upgradedb
+#    EOF
+#end
+
