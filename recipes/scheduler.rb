@@ -19,7 +19,7 @@ if exists_local("ndb", "mysqld")
 end  
 
 service_target = "/lib/systemd/system/airflow-scheduler.service"
-service_template = "init_system/systemd/airflow-scheduler.service.erb"
+service_template = "airflow-scheduler.service.erb"
 
 image_name = "#{consul_helper.get_service_fqdn("registry")}:#{node['hops']['docker']['registry']['port']}/airflow:#{node['airflow']['version']}"
 
