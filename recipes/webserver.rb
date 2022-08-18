@@ -17,7 +17,7 @@ if exists_local("ndb", "mysqld")
   deps = "mysqld.service"
 end  
 
-service_target = "/usr/lib/systemd/system/airflow-webserver.service"
+service_target = "/lib/systemd/system/airflow-webserver.service"
 service_template = "airflow-webserver.service.erb"
 
 image_name = "#{consul_helper.get_service_fqdn("registry")}:#{node['hops']['docker']['registry']['port']}/airflow:#{node['airflow']['version']}"
