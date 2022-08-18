@@ -21,6 +21,11 @@ include_recipe "hops_airflow::db"
 include_recipe "hops_airflow::webserver"
 include_recipe "hops_airflow::scheduler"
 
+hopsworksUser = "glassfish"
+if node.attribute? "hopsworks" and node["hopsworks"].attribute? "user"
+   hopsworksUser = node['hopsworks']['user']
+end
+
 directory node['airflow']['base_dir'] + "/plugins"  do
   owner node['airflow']['user']
   group node['airflow']['group']
