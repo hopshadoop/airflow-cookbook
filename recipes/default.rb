@@ -15,6 +15,7 @@
 
 include_recipe "hops_airflow::db"
 
+
 hopsworksUser = "glassfish"
 hopsworksGroup = "glassfish"
 if node.attribute? "hopsworks"
