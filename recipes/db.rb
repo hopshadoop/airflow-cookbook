@@ -1,11 +1,15 @@
 exec = "#{node['ndb']['scripts_dir']}/mysql-client.sh"
 
+# If we move to NDB, this fails. We need to decrease new length of password from 5000 to 2000 chars (at most).
+# airflow/airflow/migrations/versions/fe461863935f_increase_length_for_connection_password.py
+
 bash 'create_airflow_db' do	
   user "root"	
   code <<-EOH
       set -e	
-#      #{exec} -e \"CREATE DATABASE IF NOT EXISTS airflow CHARACTER SET latin1\"	
-      #{exec} -e \"CREATE DATABASE IF NOT EXISTS airflow CHARACTER SET UTF8MB3 COLLATE utf8_general_ci\"
+      #{exec} -e \"CREATE DATABASE IF NOT EXISTS airflow CHARACTER SET latin1\"	
+# This is airflow 2. It fails for airflow-1, because some rows are too large for NDB
+#      #{exec} -e \"CREATE DATABASE IF NOT EXISTS airflow CHARACTER SET UTF8MB3 COLLATE utf8_general_ci\"
       #{exec} -e \"CREATE USER IF NOT EXISTS '#{node['airflow']['mysql_user']}'@'localhost' IDENTIFIED WITH mysql_native_password BY '#{node['airflow']['mysql_password']}'\"
 
       #{exec} -e \"CREATE USER IF NOT EXISTS '#{node['airflow']['mysql_user']}'@'127.0.0.1' IDENTIFIED WITH mysql_native_password BY '#{node['airflow']['mysql_password']}'\"
