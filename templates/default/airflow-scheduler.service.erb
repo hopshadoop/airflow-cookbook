@@ -18,6 +18,7 @@ After=network.target <%= @deps %>
 
 [Service]
 ExecStart = /usr/bin/docker run --rm --name airfow-scheduler \
+           -v /hopsfs:/hopsfs \
            -v <%= node['airflow']['base_dir'] %>/airflow.cfg:/airflow/airflow.cfg \
            -v <%= node['airflow']['data_volume']['dags_dir'] %>:/airflow/dags \
            -v <%= node['airflow']['data_volume']['log_dir'] %>:/airflow/logs \
