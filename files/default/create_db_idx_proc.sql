@@ -4,9 +4,6 @@
 --       index exists
 DELIMITER $$
 
-# This 'owners' column is too big for RonDB, reduce from 5000 to 1000 in length
-ALTER TABLE `airflow`.`dag` MODIFY owners VARCHAR(1000);
-
 DROP PROCEDURE IF EXISTS `airflow`.`create_idx` $$
 CREATE PROCEDURE `airflow`.`create_idx`(
     target_schema VARCHAR(100),

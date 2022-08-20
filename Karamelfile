@@ -8,4 +8,3 @@ dependencies:
       - ndb::mysqld
       - hopsworks::default
       - hops::docker_registry
-      - hopsworks::default
