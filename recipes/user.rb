@@ -42,4 +42,5 @@ group node['airflow']['group'] do
   members [hopsworksUser]  
   append true
   not_if { node['install']['external_users'].casecmp("true") == 0 }
+  only_if "getent passwd #{hopsworksUser}"
 end
