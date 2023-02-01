@@ -34,12 +34,13 @@ if platform == 'rhel'
     group 'root'
     code <<-EOF
 tee -a /etc/yum.repos.d/mariadb.repo << EOM
-# MariaDB 10.1 CentOS repository list - created 2020-10-07 14:28 UTC
-# http://downloads.mariadb.org/mariadb/repositories/
+# MariaDB 10.8 CentOS repository list - created 2023-02-01 07:40 UTC
+# https://mariadb.org/download/
 [mariadb]
 name = MariaDB
-baseurl = http://yum.mariadb.org/10.1/centos7-amd64
-gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
+baseurl = https://mirror.one.com/mariadb/yum/10.8/centos8-aarch64
+module_hotfixes=1
+gpgkey=https://mirror.one.com/mariadb/yum/RPM-GPG-KEY-MariaDB
 gpgcheck=1
 EOM
     EOF
