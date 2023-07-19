@@ -24,6 +24,8 @@ bash 'init_airflow_db' do
   user 'root'
   code <<-EOF
     docker run -v #{node['airflow']['base_dir']}/airflow.cfg:/airflow/airflow.cfg \
+      -v #{ node['airflow']['base_dir'] }/log_config.py:/airflow/log_config.py \
+      -v #{ node['airflow']['data_volume']['log_dir'] }:/airflow/logs \
       --network=host \
       #{docker_registry}/airflow:#{node['airflow']['version']} \
       airflow upgradedb

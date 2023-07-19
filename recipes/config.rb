@@ -35,3 +35,10 @@ template "#{node["airflow"]["base_dir"]}/airflow.cfg" do
     end
   )
 end
+
+cookbook_file "#{node["airflow"]["base_dir"]}/log_config.py" do
+  source 'log_config.py'
+  owner node['airflow']['user']
+  group node['airflow']['group']
+  mode 0750
+end
