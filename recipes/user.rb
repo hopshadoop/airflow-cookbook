@@ -44,3 +44,10 @@ group node['airflow']['group'] do
   not_if { node['install']['external_users'].casecmp("true") == 0 }
   only_if "getent passwd #{hopsworksUser}"
 end
+
+hops_hdfs_directory "#{home}/#{node['hadoop_spark']['user']}" do
+  action :create_as_superuser
+  owner node['airflow']['user']
+  group node['airflow']['user']
+  mode "1777"
+end
