@@ -5,6 +5,10 @@ dependencies:
       - hops::docker_registry
       - hops::nm
       - hops::dn
+  - recipe: hops_airflow::install
+    global:
+      - hops::nm
+      - hops::dn
   - recipe: hops_airflow::worker
     global:  
       - hops_airflow::default
