@@ -19,7 +19,7 @@ include_attribute "hops"
 
 # User configuration
 default['airflow']["version"]         = "1.10.10"
-default['airflow']['url']             = "#{node['download_url']}/airflow/#{node['airflow']['version']}/airflow.tgz"
+default['airflow']['url']             = "https://repo.hops.works/dev/gibson/airflow.tgz"
 default['airflow']['user']            = node['install']['user'].empty? ? 'airflow' : node['install']['user']
 default['airflow']['user_id']         = '1512'
 default['airflow']['group']           = node['install']['user'].empty? ? 'airflow' : node['install']['user']
