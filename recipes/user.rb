@@ -46,7 +46,7 @@ group node['airflow']['group'] do
   only_if "getent passwd #{hopsworksUser}"
 end
 
-hops_hdfs_directory "#{home}/#{node['hadoop_spark']['user']}" do
+hops_hdfs_directory "#{home}/#{node['airflow']['user']}" do
   action :create_as_superuser
   owner node['airflow']['user']
   group node['airflow']['user']
