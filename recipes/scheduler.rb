@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+Chef::Recipe.send(:include, Hops::Helpers)
 
 deps = ""
 if exists_local("ndb", "mysqld") 
