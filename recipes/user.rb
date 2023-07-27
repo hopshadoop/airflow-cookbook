@@ -52,3 +52,11 @@ hops_hdfs_directory "/user/#{node['airflow']['user']}" do
   group node['airflow']['user']
   mode "1777"
 end
+
+crypto_dir = x509_helper.get_crypto_dir(node['airflow']['user'])
+kagent_hopsify "Generate x.509" do
+  user node['airflow']['user']
+  crypto_directory crypto_dir
+  action :generate_x509
+  not_if { node["kagent"]["enabled"] == "false" }
+end
