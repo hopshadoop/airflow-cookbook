@@ -26,8 +26,8 @@ ExecStart = /usr/bin/docker run --rm --name airfow-scheduler \
            -v <%= node['airflow']['data_volume']['secrets_dir'] %>:/airflow/secrets \
            -v /srv/hops/super_crypto/hdfs:/srv/fuse/certs \
            <%= @docker_fuse_args %> \
+            --network=host \
            <%= @image_name %>
-           --network=host \
             start_services.sh scheduler
 ExecStop = /usr/bin/docker stop airflow-scheduler
 
