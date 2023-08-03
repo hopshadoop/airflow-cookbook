@@ -9,5 +9,6 @@ dependencies:
     global:  
       - hops_airflow::default
   - recipe: hops_airflow::install
-    local:
-      - hops_airflow::default
+    global:
+      - hops::nn
+      - hops::dn
