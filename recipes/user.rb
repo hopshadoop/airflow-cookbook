@@ -49,7 +49,7 @@ end
 hops_hdfs_directory "/user/#{node['airflow']['user']}" do
   action :create_as_superuser
   owner node['airflow']['user']
-  group node['airflow']['user']
+  group node['hops']['group']
   mode "1777"
 end
 
