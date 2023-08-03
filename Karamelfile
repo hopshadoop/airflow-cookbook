@@ -8,3 +8,6 @@ dependencies:
   - recipe: hops_airflow::worker
     global:  
       - hops_airflow::default
+  - recipe: hops_airflow::install
+    local:
+      - hops_airflow::default
