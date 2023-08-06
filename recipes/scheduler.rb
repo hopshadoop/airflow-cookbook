@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+Chef::Recipe.send(:include, Hops::Helpers)
 
 deps = ""
 if exists_local("ndb", "mysqld") 
@@ -26,6 +27,15 @@ else
   service_template = "airflow-scheduler.service.erb"
 end
 
+namenode_fdqn = consul_helper.get_service_fqdn("rpc.namenode")
+apparmor_security_opt=""
+apparmor_enabled = is_apparmor_enabled()
+if apparmor_enabled
+  apparmor_security_opt="--security-opt apparmor:#{node['hops']['docker']['hopsfsmount-apparmor-profile']}"
+end
+
+docker_fuse_args = "--device /dev/fuse #{apparmor_security_opt} --security-opt seccomp=#{node['hops']['docker']['hopsfsmount-seccomp-profile']}"
+
 image_name = "#{consul_helper.get_service_fqdn("registry")}:#{node['hops']['docker']['registry']['port']}/airflow:#{node['airflow']['version']}"
 
 template service_target do
@@ -36,6 +46,8 @@ template service_target do
   variables({
     :deps => deps,
     :image_name => image_name,
+    :docker_fuse_args => docker_fuse_args,
+    :namenode_fdqn => namenode_fdqn
   })
 end
 

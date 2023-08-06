@@ -17,15 +17,20 @@ Description=Airflow scheduler daemon
 After=network.target <%= @deps %>
 
 [Service]
-ExecStart = /usr/bin/docker run --rm --name airfow-scheduler \
+ExecStart = /usr/bin/docker run --rm --name airflow-scheduler \
+           -e "IS_TLS=<%= node['hops']['tls']['enabled'] %>" \
+           -e "NAMENODE_IP=<%= @namenode_fdqn %>" \
+           -e "NAMENODE_PORT=<%= node['hops']['nn']['port'] %>" \
            -v <%= node['airflow']['base_dir'] %>/airflow.cfg:/airflow/airflow.cfg \
            -v <%= node['airflow']['base_dir'] %>/log_config.py:/airflow/log_config.py \
            -v <%= node['airflow']['data_volume']['dags_dir'] %>:/airflow/dags \
            -v <%= node['airflow']['data_volume']['log_dir'] %>:/airflow/logs \
            -v <%= node['airflow']['data_volume']['secrets_dir'] %>:/airflow/secrets \
-           --network=host \
+           -v /srv/hops/super_crypto/<%= node['airflow']['user'] %>:/srv/fuse/certs \
+           <%= @docker_fuse_args %> \
+            --network=host \
            <%= @image_name %> \
-           airflow scheduler
+            start_services.sh scheduler
 ExecStop = /usr/bin/docker stop airflow-scheduler
 
 Restart=always

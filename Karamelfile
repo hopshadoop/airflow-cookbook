@@ -3,6 +3,12 @@ dependencies:
     global:  
       - ndb::mysqld
       - hops::docker_registry
+      - hops::nn
+      - hops::dn
   - recipe: hops_airflow::worker
     global:  
       - hops_airflow::default
+  - recipe: hops_airflow::install
+    global:
+      - hops::nn
+      - hops::dn

@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+Chef::Recipe.send(:include, Hops::Helpers)
 
 group node['airflow']['group'] do
   gid node['airflow']['group_id']
@@ -43,4 +44,19 @@ group node['airflow']['group'] do
   append true
   not_if { node['install']['external_users'].casecmp("true") == 0 }
   only_if "getent passwd #{hopsworksUser}"
+end
+
+hops_hdfs_directory "/user/#{node['airflow']['user']}" do
+  action :create_as_superuser
+  owner node['airflow']['user']
+  group node['hops']['group']
+  mode "1777"
+end
+
+crypto_dir = x509_helper.get_crypto_dir(node['airflow']['user'])
+kagent_hopsify "Generate x.509" do
+  user node['airflow']['user']
+  crypto_directory crypto_dir
+  action :generate_x509
+  not_if { node["kagent"]["enabled"] == "false" }
 end
