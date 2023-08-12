@@ -42,3 +42,10 @@ cookbook_file "#{node["airflow"]["base_dir"]}/log_config.py" do
   group node['airflow']['group']
   mode 0750
 end
+
+cookbook_file "#{node["airflow"]["base_dir"]}/webserver_config.py" do
+  source 'webserver_config.py'
+  owner node['airflow']['user']
+  group node['airflow']['group']
+  mode 0750
+end
