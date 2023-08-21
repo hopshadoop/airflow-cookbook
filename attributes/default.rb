@@ -128,7 +128,7 @@ default['airflow']["config"]["github_enterprise"]["api_rev"] = 'v3'
 default['airflow']["config"]["core"]["executor"]  = "LocalExecutor"
 
 default['airflow']['config']['core']['load_examples'] = false
-default['airflow']['config']['core']['default_timezone'] = "system"
+default['airflow']['config']['core']['default_timezone'] = "utc"
 default['airflow']['config']['core']['logging_config_class'] = "log_config.LOGGING_CONFIG"
 
 # The base url of your website as airflow cannot guess what domain or
@@ -136,6 +136,7 @@ default['airflow']['config']['core']['logging_config_class'] = "log_config.LOGGI
 # airflow sends to point links to the right web server
 default['airflow']["config"]["webserver"]["web_server_worker_timeout"]  = 120
 default['airflow']["config"]["webserver"]["web_server_port"] = 12358
+default['airflow']["config"]["webserver"]["rbac"] = true
 default['airflow']['config']['webserver']['base_path'] = "/hopsworks-api/airflow"
 default['airflow']["config"]["webserver"]["base_url"] = (node['install']['localhost'].casecmp?("true") ?  "http://localhost:" : "http://#{node['fqdn']}:") + node['airflow']['config']['webserver']['web_server_port'].to_s + node['airflow']['config']['webserver']['base_path']  
 default['airflow']["config"]["webserver"]["web_server_host"] = '0.0.0.0'
@@ -143,12 +144,7 @@ default['airflow']["config"]["webserver"]["web_server_host"] = '0.0.0.0'
 # The time the gunicorn webserver waits before timing out on a worker
 
 default['airflow']["config"]["webserver"]["expose_config"] = false
-default['airflow']["config"]["webserver"]["filter_by_owner"] = true
 default['airflow']["config"]["webserver"]["authenticate"] = true
-
-#default['airflow']["config"]["webserver"]["auth_backend"] = "airflow.contrib.auth.backends.password_auth"
-# PYTHONPATH should include the path to this module. PYTHONPATH is exported in airflow.env
-default['airflow']["config"]["webserver"]["auth_backend"] = "hopsworks_auth.hopsworks_jwt_auth"
 
 # Secret key used to run your flask app
 default['airflow']["config"]["webserver"]["secret_key"]  = "temporary_key"
