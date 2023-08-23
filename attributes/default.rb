@@ -21,6 +21,8 @@ include_attribute "hops"
 default['airflow']["version"]         = "1.10.10.1"
 default['airflow']['url']             = "#{node['download_url']}/airflow/#{node['airflow']['version']}/airflow.tgz"
 default['airflow']['user']            = node['install']['user'].empty? ? 'airflow' : node['install']['user']
+default['airflow']['user']['pwd']     = "airflowsecurepwd"
+default['airflow']['user']['email']   = "airflow@hopsworks.ai"
 default['airflow']['user_id']         = '1512'
 default['airflow']['group']           = node['install']['user'].empty? ? 'airflow' : node['install']['user']
 default['airflow']['group_id']        = '1508'
@@ -53,6 +55,9 @@ default['airflow']['data_volume']['root_dir']       = "#{node['data']['dir']}/ai
 default['airflow']['data_volume']['dags_dir']       = "#{node['airflow']['data_volume']['root_dir']}/dags"
 default['airflow']['data_volume']['log_dir']        = "#{node['airflow']['data_volume']['root_dir']}/logs"
 default['airflow']['data_volume']['secrets_dir']    = "#{node['airflow']['data_volume']['root_dir']}/secrets"
+
+# api key file
+default['airflow']['api_key_file']                  = "#{node['airflow']['data_volume']['secrets_dir']}/api_key_file"
 
 # Folder where airflow will store Project user secrets
 default['airflow']['secrets_link']                    = "#{node['airflow']['base_dir']}/secrets"

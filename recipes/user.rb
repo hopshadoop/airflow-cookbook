@@ -60,3 +60,5 @@ kagent_hopsify "Generate x.509" do
   action :generate_x509
   not_if { node["kagent"]["enabled"] == "false" }
 end
+
+
