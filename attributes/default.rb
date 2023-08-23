@@ -57,7 +57,7 @@ default['airflow']['data_volume']['log_dir']        = "#{node['airflow']['data_v
 default['airflow']['data_volume']['secrets_dir']    = "#{node['airflow']['data_volume']['root_dir']}/secrets"
 
 # api key file
-default['airflow']['api_key_file']                  = "#{node['airflow']['data_volume']['secrets_dir']}/api_key_file"
+default['airflow']['api_key_file']                  = "#{node['airflow']['data_volume']['secrets_dir']}/api_key"
 
 # Folder where airflow will store Project user secrets
 default['airflow']['secrets_link']                    = "#{node['airflow']['base_dir']}/secrets"
