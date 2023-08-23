@@ -21,6 +21,7 @@ ExecStart = /usr/bin/docker run --rm --name airflow-webserver \
            -e "IS_TLS=<%= node['hops']['tls']['enabled'] %>" \
            -e "NAMENODE_IP=<%= @namenode_fdqn %>" \
            -e "NAMENODE_PORT=<%= node['hops']['nn']['port'] %>" \
+           -e "API_KEY_FILE=<%= node['airflow']['api_key_file'] %>" \
            -v <%= node['airflow']['base_dir'] %>/airflow.cfg:/airflow/airflow.cfg \
            -v <%= node['airflow']['base_dir'] %>/log_config.py:/airflow/log_config.py \
            -v <%= node['airflow']['data_volume']['dags_dir'] %>:/airflow/dags \
