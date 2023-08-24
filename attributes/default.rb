@@ -21,8 +21,6 @@ include_attribute "hops"
 default['airflow']["version"]         = "1.10.10.1"
 default['airflow']['url']             = "#{node['download_url']}/airflow/#{node['airflow']['version']}/airflow.tgz"
 default['airflow']['user']            = node['install']['user'].empty? ? 'airflow' : node['install']['user']
-default['airflow']['user']['pwd']     = "airflowsecurepwd"
-default['airflow']['user']['email']   = "airflow@hopsworks.ai"
 default['airflow']['user_id']         = '1512'
 default['airflow']['group']           = node['install']['user'].empty? ? 'airflow' : node['install']['user']
 default['airflow']['group_id']        = '1508'
@@ -36,7 +34,10 @@ default['airflow']["user_home_directory"] = "/home/#{node['airflow']['user']}"
 default['airflow']["shell"] = "/bin/bash"
 
 default['airflow']["dir"]                 = node['install']['dir'].empty? ? "/srv/hops" : node['install']['dir']
-default['airflow']["base_dir"]            = node['airflow']['dir'] + "/airflow" 
+default['airflow']["base_dir"]            = node['airflow']['dir'] + "/airflow"
+
+default['airflow']['hopsworks']['password']     = "airflowsecurepwd"
+default['airflow']['hopsworks']['email']        = "airflow@hopsworks.ai"
 
 
 # General config

@@ -18,8 +18,8 @@ ruby_block 'generate-api-key' do
     api_key_url = URI.parse("#{hopsworks_endpoint}/hopsworks-api/api/users/apiKey")
 
     params =  {
-      :email => node['airflow']['user']['email'],
-      :password => node['airflow']['user']['pwd']
+      :email => node['airflow']['hopsworks']['email'],
+      :password => node['airflow']['hopsworks']['password']
     }
 
     api_key_params = {
