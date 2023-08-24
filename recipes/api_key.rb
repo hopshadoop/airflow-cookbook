@@ -24,7 +24,7 @@ ruby_block 'generate-api-key' do
 
     api_key_params = {
       :name => "airflow_" + SecureRandom.hex(12),
-      :scope => "KAFKA&scope=FEATURESTORE&scope=PROJECT&scope=JOB&scope=DATASET_CREATE&scope=DATASET_VIEW&scope=SERVING&scope=DATASET_DELETE&scope=MODELREGISTRY&scope=GIT"
+      :scope => "JOB"
     }
 
     http = Net::HTTP.new(url.host, url.port)
@@ -74,6 +74,6 @@ end
 file node['airflow']['api_key_file']  do
   content lazy {api_key}
   mode node['airflow']["config_file_mode"]
-  owner node['onlinefs']['user']
-  group node['onlinefs']['group']
+  owner node['airflow']['user']
+  group node['airflow']['user']
 end
