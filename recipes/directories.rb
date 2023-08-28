@@ -123,7 +123,7 @@ end
 directory "#{node['airflow']['data_volume']['secrets_dir']}" do
   owner node['airflow']['user']
   group node['airflow']['group']
-  mode 700
+  mode 0130
   action :create
 end
 
