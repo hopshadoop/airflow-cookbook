@@ -34,7 +34,10 @@ default['airflow']["user_home_directory"] = "/home/#{node['airflow']['user']}"
 default['airflow']["shell"] = "/bin/bash"
 
 default['airflow']["dir"]                 = node['install']['dir'].empty? ? "/srv/hops" : node['install']['dir']
-default['airflow']["base_dir"]            = node['airflow']['dir'] + "/airflow" 
+default['airflow']["base_dir"]            = node['airflow']['dir'] + "/airflow"
+
+default['airflow']['hopsworks']['password']     = "airflowsecurepwd"
+default['airflow']['hopsworks']['email']        = "airflow@hopsworks.ai"
 
 
 # General config
@@ -53,6 +56,9 @@ default['airflow']['data_volume']['root_dir']       = "#{node['data']['dir']}/ai
 default['airflow']['data_volume']['dags_dir']       = "#{node['airflow']['data_volume']['root_dir']}/dags"
 default['airflow']['data_volume']['log_dir']        = "#{node['airflow']['data_volume']['root_dir']}/logs"
 default['airflow']['data_volume']['secrets_dir']    = "#{node['airflow']['data_volume']['root_dir']}/secrets"
+
+# api key file
+default['airflow']['api_key_file']                  = "#{node['airflow']['data_volume']['secrets_dir']}/api_key"
 
 # Folder where airflow will store Project user secrets
 default['airflow']['secrets_link']                    = "#{node['airflow']['base_dir']}/secrets"
