@@ -22,10 +22,11 @@ ruby_block 'generate-api-key' do
       :password => node['airflow']['hopsworks']['password']
     }
 
-    api_key_params = {
-      :name => "airflow_" + SecureRandom.hex(12),
-      :scope => "JOB"
-    }
+    api_key_params = [
+      ['name', "airflow_" + SecureRandom.hex(12)],
+      ['scope', 'JOB'],
+      ['scope', 'PROJECT']
+    ]
 
     http = Net::HTTP.new(url.host, url.port)
     http.read_timeout = 120
