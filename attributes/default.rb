@@ -18,7 +18,7 @@ include_attribute "hops"
 
 
 # User configuration
-default['airflow']["version"]         = "1.10.10.1"
+default['airflow']["version"]         = "1.10.10.2"
 default['airflow']['url']             = "#{node['download_url']}/airflow/#{node['airflow']['version']}/airflow.tgz"
 default['airflow']['user']            = node['install']['user'].empty? ? 'airflow' : node['install']['user']
 default['airflow']['user_id']         = '1512'
